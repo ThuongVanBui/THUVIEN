@@ -1,5 +1,6 @@
 #include "mylib.h"
 
+char MENU_DMS[4][30] 		= {"1.Them    ","2.Xoa     ","3.Sua     ","4.Xem DS  " };
 
 enum TrangThaiDMS {
 	DUOCMUON = 0,
@@ -79,9 +80,37 @@ void XuatDMS(LISTDMS ls) {
 	}
 }
 
+
+void HienThiMenu() {
+	int choice;
+	
+	do {
+		printf(MENU_DMS[0]);
+		printf(MENU_DMS[1]);
+		printf(MENU_DMS[2]);
+		printf(MENU_DMS[3]);
+ 		scanf("%d",&choice);
+   
+ 	switch (choice) {
+    case 1: printf(MENU_DMS[0]); 
+          break;
+    case 2:	printf(MENU_DMS[1]); 
+          break;
+    case 3: printf(MENU_DMS[2]); 
+         break;
+    case 4:printf(MENU_DMS[3]); 
+         break;
+     default: printf("Wrong Choice. Enter again\n");
+         break;
+ 	} 
+  
+	} while (choice != 0);
+}
+
 int main() {
-	LISTDMS ls;
-	khoiTaoDS(ls);
-	NhapSach(ls);
-	XuatDMS(ls);
+//	LISTDMS ls;
+//	khoiTaoDS(ls);
+//	NhapSach(ls);
+//	XuatDMS(ls);
+	HienThiMenu();
 }
