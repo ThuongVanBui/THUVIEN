@@ -1,5 +1,6 @@
 #include "mylib.h"
 
+char MENU_DMS[4][30] 		= {"1.Them    ","2.Xoa     ","3.Sua     ","4.Xem DS  " };
 
 enum TrangThaiDMS {
 	DUOCMUON = 0,
@@ -15,18 +16,18 @@ typedef struct DanhMucSach {
 };
 
 //Danh Sach SACH - DANH SACH LIEN DON
-typedef struct NodeDANHMUCSACH {
+typedef struct NodeDMS {
 	DanhMucSach dms;
-	NodeDANHMUCSACH *dmsNext;
+	NodeDMS *dmsNext;
 
 };
-typedef struct NodeDANHMUCSACH *NodeDANHMUCSACHPTR;
+typedef struct NodeDMS *NodeDMS_PTR;
 
-struct ListDANHMUCSACH{
-	NodeDANHMUCSACHPTR dmsFirst;
-	NodeDANHMUCSACHPTR dmsLast;
+struct ListDMS{
+	NodeDMS_PTR dmsFirst;
+	NodeDMS_PTR dmsLast;
 };
-typedef struct ListDANHMUCSACH LISTDMS;
+typedef struct ListDMS LISTDMS;
 
 
 void khoiTaoDS(LISTDMS &lsDMS){
@@ -38,8 +39,8 @@ int Rong(LISTDMS lsDMS){
 }
 
 void themDau(LISTDMS &lsDMS, DanhMucSach dms) {
-	NodeDANHMUCSACHPTR p;
-	p = new NodeDANHMUCSACH;
+	NodeDMS_PTR p;
+	p = new NodeDMS;
 	p->dms = dms;
 	p->dmsNext = NULL;
 	if (Rong(lsDMS) == 0) {
@@ -53,35 +54,95 @@ void themDau(LISTDMS &lsDMS, DanhMucSach dms) {
 }
 
 
-void NhapSach(LISTDMS &ls) {
+void NhapSach(LISTDMS &ls, char *s) {
+	int c;
+	int vitri;
 	while(true) {
 	DanhMucSach item;
+	clrscr();
 	printf("Nhap ma sach:");
-	scanf("%s",&item.MaSach);
+NHAPMA:
+	c = getch();
+	if ( ( c >= 'A' && c <= 'Z') || ( c >='a' && c <= 'z' ) ) {
+		scanf("%s",&item.MaSach);
+
+	} else {
+		goto NHAPMA;
+ 
+		
+	}
+	
 	if (strcmp(item.MaSach,"0") == 0) {
 		break;
 	}
 	printf("Nhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");
-	scanf("%d",&item.trangthaiDMS);
+
+NHAPTT:
+	c = getch();
+	if ( ( c <= '9' && c >= '0') ) {
+		scanf("%d",&item.trangthaiDMS);
+
+	} else {
+		goto NHAPTT;
+ 
+		
+	}
 	printf("Nhap vi tri:");
-	scanf("%s",&item.ViTri);
+NHAPVITRI:
+	if ( ( c >= 'A' && c <= 'Z') || ( c <= '9' && c >= '0') || ( c >='a' && c <= 'z' ) ) {
+		scanf("%s",&item.ViTri);
+
+	} else {
+		goto NHAPVITRI;
+
+	}
 	themDau(ls, item);
+	
 	};
 	
 }
 
 
 void XuatDMS(LISTDMS ls) {
-	for(NodeDANHMUCSACHPTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
+	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
 		printf("Ma sach: %s", p->dms.MaSach);
 		printf("Trang thai: %d", p->dms.trangthaiDMS);
 		printf("Vi tri: %s\n", p->dms.ViTri);
 	}
 }
 
+
+void HienThiMenu(LISTDMS &ls) {
+	int choice;
+	char *s;
+	for (int i = 0; i < 4; i++) {
+		printf(MENU_DMS[i]);
+
+	}
+	do {
+ 		scanf("%d",&choice);
+   
+ 	switch (choice) {
+    case 1: 
+    		clrscr();
+    		NhapSach(ls, s);
+			break;
+    case 2:	printf(MENU_DMS[1]); 
+          break;
+    case 3: printf(MENU_DMS[2]); 
+         break;
+    case 4:printf(MENU_DMS[3]); 
+         break;
+     default: printf("Wrong Choice. Enter again\n");
+         break;
+ 	} 
+  
+	} while (choice != 0);
+}
+
 int main() {
 	LISTDMS ls;
 	khoiTaoDS(ls);
-	NhapSach(ls);
-	XuatDMS(ls);
+//	XuatDMS(ls);
+	HienThiMenu(ls);
 }
