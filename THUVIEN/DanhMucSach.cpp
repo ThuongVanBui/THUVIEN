@@ -16,18 +16,18 @@ typedef struct DanhMucSach {
 };
 
 //Danh Sach SACH - DANH SACH LIEN DON
-typedef struct NodeDANHMUCSACH {
+typedef struct NodeDMS {
 	DanhMucSach dms;
-	NodeDANHMUCSACH *dmsNext;
+	NodeDMS *dmsNext;
 
 };
-typedef struct NodeDANHMUCSACH *NodeDANHMUCSACHPTR;
+typedef struct NodeDMS *NodeDMS_PTR;
 
-struct ListDANHMUCSACH{
-	NodeDANHMUCSACHPTR dmsFirst;
-	NodeDANHMUCSACHPTR dmsLast;
+struct ListDMS{
+	NodeDMS_PTR dmsFirst;
+	NodeDMS_PTR dmsLast;
 };
-typedef struct ListDANHMUCSACH LISTDMS;
+typedef struct ListDMS LISTDMS;
 
 
 void khoiTaoDS(LISTDMS &lsDMS){
@@ -39,8 +39,8 @@ int Rong(LISTDMS lsDMS){
 }
 
 void themDau(LISTDMS &lsDMS, DanhMucSach dms) {
-	NodeDANHMUCSACHPTR p;
-	p = new NodeDANHMUCSACH;
+	NodeDMS_PTR p;
+	p = new NodeDMS;
 	p->dms = dms;
 	p->dmsNext = NULL;
 	if (Rong(lsDMS) == 0) {
@@ -73,7 +73,7 @@ void NhapSach(LISTDMS &ls) {
 
 
 void XuatDMS(LISTDMS ls) {
-	for(NodeDANHMUCSACHPTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
+	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
 		printf("Ma sach: %s", p->dms.MaSach);
 		printf("Trang thai: %d", p->dms.trangthaiDMS);
 		printf("Vi tri: %s\n", p->dms.ViTri);

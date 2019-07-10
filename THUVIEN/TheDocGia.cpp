@@ -8,8 +8,6 @@ enum Phai {
 	Nu = 1
 };
 
-
-
 typedef struct DanhSachTheDocGia {
 	int MaThe;
 	char Ho[20];
