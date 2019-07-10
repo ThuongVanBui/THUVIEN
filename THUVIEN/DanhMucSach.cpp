@@ -54,19 +54,50 @@ void themDau(LISTDMS &lsDMS, DanhMucSach dms) {
 }
 
 
-void NhapSach(LISTDMS &ls) {
+void NhapSach(LISTDMS &ls, char *s) {
+	int c;
+	int vitri;
 	while(true) {
 	DanhMucSach item;
+	clrscr();
 	printf("Nhap ma sach:");
-	scanf("%s",&item.MaSach);
+NHAPMA:
+	c = getch();
+	if ( ( c >= 'A' && c <= 'Z') || ( c >='a' && c <= 'z' ) ) {
+		scanf("%s",&item.MaSach);
+
+	} else {
+		goto NHAPMA;
+ 
+		
+	}
+	
 	if (strcmp(item.MaSach,"0") == 0) {
 		break;
 	}
 	printf("Nhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");
-	scanf("%d",&item.trangthaiDMS);
+
+NHAPTT:
+	c = getch();
+	if ( ( c <= '9' && c >= '0') ) {
+		scanf("%d",&item.trangthaiDMS);
+
+	} else {
+		goto NHAPTT;
+ 
+		
+	}
 	printf("Nhap vi tri:");
-	scanf("%s",&item.ViTri);
+NHAPVITRI:
+	if ( ( c >= 'A' && c <= 'Z') || ( c <= '9' && c >= '0') || ( c >='a' && c <= 'z' ) ) {
+		scanf("%s",&item.ViTri);
+
+	} else {
+		goto NHAPVITRI;
+
+	}
 	themDau(ls, item);
+	
 	};
 	
 }
@@ -81,19 +112,21 @@ void XuatDMS(LISTDMS ls) {
 }
 
 
-void HienThiMenu() {
+void HienThiMenu(LISTDMS &ls) {
 	int choice;
-	
+	char *s;
+	for (int i = 0; i < 4; i++) {
+		printf(MENU_DMS[i]);
+
+	}
 	do {
-		printf(MENU_DMS[0]);
-		printf(MENU_DMS[1]);
-		printf(MENU_DMS[2]);
-		printf(MENU_DMS[3]);
  		scanf("%d",&choice);
    
  	switch (choice) {
-    case 1: printf(MENU_DMS[0]); 
-          break;
+    case 1: 
+    		clrscr();
+    		NhapSach(ls, s);
+			break;
     case 2:	printf(MENU_DMS[1]); 
           break;
     case 3: printf(MENU_DMS[2]); 
@@ -108,9 +141,8 @@ void HienThiMenu() {
 }
 
 int main() {
-//	LISTDMS ls;
-//	khoiTaoDS(ls);
-//	NhapSach(ls);
+	LISTDMS ls;
+	khoiTaoDS(ls);
 //	XuatDMS(ls);
-	HienThiMenu();
+	HienThiMenu(ls);
 }
