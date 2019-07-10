@@ -4,12 +4,24 @@
 #include <dos.h>
 #include <string.h>
 #include <windows.h>
+#include <ctype.h>
+#include <iostream>
+using namespace std;
 #define Enter 13
 //const int WHITE=15;
 #define PASSWORD "abcdef"
 //const int WHITE=15;
 
+const int UP =72+128;
+const int DOWN =80+128;
 
+const int F3=61+128;
+const int F2=60+128;
+const int F1=59+128;
+
+const int ENTER =13;
+const int ESC =27;
+const int BACKSPACE = 8;
 
 //char* Pwd () {
 //     char S[40]; int i=0;
@@ -100,4 +112,39 @@ void SetBGColor(WORD color)
 }
 void clrscr() {
 	system("cls");
+}
+char* InputType(int n,int &endchar,int type){
+	n+=1;
+	int i =0;
+	char *s = new char[n];
+	char c ;
+	while(1){
+		c = getch();
+		if(c==0 || c== 224)
+		{
+			c= getch();
+			c+=128;
+		}
+		if(c==8 && i!=0){
+			printf("\b \b"),i--;
+		}
+		if(c == ENTER || c == ESC){
+			endchar = c; 
+			break;
+		}
+		if(i>=n-1) continue;
+		// 1: chu~ + so ; 2: only so; 3: onl chu
+		if(type==1)
+			if(!isalnum(c)) continue;
+		if(type==2)
+			if(!isdigit(c)) continue;
+		if(type==3)
+			if(!isalpha(c)) continue;		
+		printf("%c",c);
+		s[i++] = c;
+		if(i==n)
+			break;
+	}
+	s[i]='\0';
+	return s;
 }

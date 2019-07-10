@@ -57,86 +57,71 @@ void themDau(LISTDMS &lsDMS, DanhMucSach dms) {
 void NhapSach(LISTDMS &ls, char *s) {
 	int c;
 	int vitri;
+	int endchar;
 	while(true) {
-	DanhMucSach item;
-	clrscr();
-	printf("Nhap ma sach:");
-NHAPMA:
-	c = getch();
-	if ( ( c >= 'A' && c <= 'Z') || ( c >='a' && c <= 'z' ) ) {
-		scanf("%s",&item.MaSach);
-
-	} else {
-		goto NHAPMA;
- 
-		
-	}
-	
-	if (strcmp(item.MaSach,"0") == 0) {
-		break;
-	}
-	printf("Nhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");
-
-NHAPTT:
-	c = getch();
-	if ( ( c <= '9' && c >= '0') ) {
-		scanf("%d",&item.trangthaiDMS);
-
-	} else {
-		goto NHAPTT;
- 
-		
-	}
-	printf("Nhap vi tri:");
-NHAPVITRI:
-	if ( ( c >= 'A' && c <= 'Z') || ( c <= '9' && c >= '0') || ( c >='a' && c <= 'z' ) ) {
-		scanf("%s",&item.ViTri);
-
-	} else {
-		goto NHAPVITRI;
-
-	}
-	themDau(ls, item);
-	
-	};
-	
+		DanhMucSach item;
+		clrscr();
+		printf("Nhap ma sach:");
+	NHAPMA:
+	//	c = getch();
+	//	if ( ( c >= 'A' && c <= 'Z') || ( c >='a' && c <= 'z' ) ) {
+	//		scanf("%s",&item.MaSach);
+	//
+	//	} else {
+	//		goto NHAPMA;
+	// 
+	//		
+	//	}
+		strcpy(item.MaSach,InputNormal(5,endchar,1));
+		if (strcmp(item.MaSach,"0") == 0) {
+			break;
+		}	
+	NHAPTT:
+		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");		
+		item.trangthaiDMS= atoi(InputNormal(5,endchar,2));		
+	NHAPVITRI:
+		printf("\nNhap vi tri:");
+		strcpy(item.ViTri,InputNormal(5,endchar,1));
+	themDau(ls, item);	
+	};	
 }
 
 
 void XuatDMS(LISTDMS ls) {
 	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
-		printf("Ma sach: %s", p->dms.MaSach);
-		printf("Trang thai: %d", p->dms.trangthaiDMS);
-		printf("Vi tri: %s\n", p->dms.ViTri);
+		printf("\nMa sach: %s", p->dms.MaSach);
+		printf("\nTrang thai: %d", p->dms.trangthaiDMS);
+		printf("\nVi tri: %s\n", p->dms.ViTri);
 	}
 }
 
 
 void HienThiMenu(LISTDMS &ls) {
 	int choice;
-	char *s;
-	for (int i = 0; i < 4; i++) {
-		printf(MENU_DMS[i]);
-
-	}
+	char *s;	
 	do {
- 		scanf("%d",&choice);
-   
- 	switch (choice) {
-    case 1: 
-    		clrscr();
-    		NhapSach(ls, s);
-			break;
-    case 2:	printf(MENU_DMS[1]); 
-          break;
-    case 3: printf(MENU_DMS[2]); 
-         break;
-    case 4:printf(MENU_DMS[3]); 
-         break;
-     default: printf("Wrong Choice. Enter again\n");
-         break;
- 	} 
-  
+		for (int i = 0; i < 4; i++) {
+			printf(MENU_DMS[i]);
+		}	
+	 	scanf("%d",&choice);
+	 	switch (choice) {
+	    case 1: 
+	    		clrscr();
+	    		NhapSach(ls, s);
+				break;
+	    case 2:	printf(MENU_DMS[1]); 
+	          break;
+	    case 3: printf(MENU_DMS[2]); 
+	         break;
+	    case 4://printf(MENU_DMS[3]);
+			printf("\n");
+			XuatDMS(ls); 
+			getch();
+	         break;
+	     default: printf("Wrong Choice. Enter again\n");
+	         break;
+	 	} 
+  	clrscr();
 	} while (choice != 0);
 }
 
