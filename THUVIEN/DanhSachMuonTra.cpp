@@ -36,7 +36,6 @@ typedef struct ListMT LISTMT;
 
 int Rong(LISTMT l) {
 	return l.mtFirst == NULL ? 0 : 1;
-	
 }
 
 void khoiTao(LISTMT &l) {
