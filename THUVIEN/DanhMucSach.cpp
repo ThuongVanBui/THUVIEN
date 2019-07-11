@@ -1,6 +1,6 @@
 #include "mylib.h"
 
-char MENU_DMS[4][30] 		= {"1.Them    ","2.Xoa     ","3.Sua     ","4.Xem DS  " };
+char MENU_DMS[5][30] 		= {"1.Them    ","2.Xoa     ","3.Sua     ","4.Xem DS     ","5.Luu tep     " };
 
 enum TrangThaiDMS {
 	DUOCMUON = 0,
@@ -63,25 +63,16 @@ void NhapSach(LISTDMS &ls, char *s) {
 		clrscr();
 		printf("Nhap ma sach:");
 	NHAPMA:
-	//	c = getch();
-	//	if ( ( c >= 'A' && c <= 'Z') || ( c >='a' && c <= 'z' ) ) {
-	//		scanf("%s",&item.MaSach);
-	//
-	//	} else {
-	//		goto NHAPMA;
-	// 
-	//		
-	//	}
-		strcpy(item.MaSach,InputNormal(5,endchar,1));
+		strcpy(item.MaSach,InputType(20,endchar,1));
 		if (strcmp(item.MaSach,"0") == 0) {
 			break;
 		}	
 	NHAPTT:
 		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");		
-		item.trangthaiDMS= atoi(InputNormal(5,endchar,2));		
+		item.trangthaiDMS= atoi(InputType(1,endchar,2));		
 	NHAPVITRI:
 		printf("\nNhap vi tri:");
-		strcpy(item.ViTri,InputNormal(5,endchar,1));
+		strcpy(item.ViTri,InputType(51,endchar,1));
 	themDau(ls, item);	
 	};	
 }
@@ -96,14 +87,60 @@ void XuatDMS(LISTDMS ls) {
 }
 
 
+void luuFile(LISTDMS ls) {
+	clrscr();
+	int i = 0;
+	FILE *f;
+	 if ((f = fopen("C:/Users/yukih/OneDrive/Documents/CTDL/THUVIEN/DANHMUCSACH.bin","wb+") )== NULL){
+       printf("Error! opening file");
+       exit(1);
+   }
+ 
+	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
+		fwrite(&p->dms.MaSach, sizeof(p->dms.MaSach), 1, f); 
+		fwrite(&p->dms.trangthaiDMS, sizeof(p->dms.trangthaiDMS), 1, f); 
+		fwrite(&p->dms.ViTri, sizeof(p->dms.ViTri), 1, f); 
+
+	}
+	fclose(f);
+	return; 
+}
+
+
+void docFile(LISTDMS &ls) {
+	clrscr();
+	int i = 0;
+	FILE *f;
+	 if ((f = fopen("C:/Users/yukih/OneDrive/Documents/CTDL/THUVIEN/DANHMUCSACH.bin","rb") )== NULL){
+       printf("Error! opening file");
+       exit(1);
+   }
+ 
+	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
+		fread(&p->dms.MaSach, sizeof(p->dms.MaSach), 1, f); 
+		fread(&p->dms.trangthaiDMS, sizeof(p->dms.trangthaiDMS), 1, f); 
+		fread(&p->dms.ViTri, sizeof(p->dms.ViTri), 1, f); 
+		printf("Ma sach: %s \n",p->dms.MaSach);
+		printf("Trang thai: %d \n",p->dms.trangthaiDMS);
+		printf("Vi tri: %s \n",p->dms.ViTri);
+	}
+	fclose(f);
+	return; 
+}
+
 void HienThiMenu(LISTDMS &ls) {
 	int choice;
+	int endchar;
 	char *s;	
 	do {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 5; i++) {
 			printf(MENU_DMS[i]);
-		}	
-	 	scanf("%d",&choice);
+		}
+		gotoxy(20,20);
+		printf("ESC: Thoat");
+		gotoxy(0,1);	
+	 	choice = atoi(InputType(1,endchar,2));
+
 	 	switch (choice) {
 	    case 1: 
 	    		clrscr();
@@ -115,9 +152,13 @@ void HienThiMenu(LISTDMS &ls) {
 	         break;
 	    case 4://printf(MENU_DMS[3]);
 			printf("\n");
-			XuatDMS(ls); 
+//			XuatDMS(ls); 
+			docFile(ls);
 			getch();
 	         break;
+	    case 5:
+	    	luuFile(ls);
+	    	break;
 	     default: printf("Wrong Choice. Enter again\n");
 	         break;
 	 	} 
