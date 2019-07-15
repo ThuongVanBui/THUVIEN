@@ -38,6 +38,13 @@ int Rong(LISTDMS lsDMS){
 	return lsDMS.dmsFirst == NULL ? 0 : 1;
 }
 
+NodeDMS_PTR NewNode_DMS(DanhMucSach dm){
+	NodeDMS_PTR p= new NodeDMS;
+	p->dms=dm;
+	p->dmsNext=NULL;
+	return p;
+}
+
 void themDau(LISTDMS &lsDMS, DanhMucSach dms) {
 	NodeDMS_PTR p;
 	p = new NodeDMS;
@@ -109,6 +116,8 @@ void luuFile(LISTDMS ls) {
 
 void docFile(LISTDMS &ls) {
 	clrscr();
+	khoiTaoDS(ls);
+	DanhMucSach dms;
 	int i = 0;
 	FILE *f;
 	 if ((f = fopen("C:/Users/yukih/OneDrive/Documents/CTDL/THUVIEN/DANHMUCSACH.bin","rb") )== NULL){
@@ -116,13 +125,10 @@ void docFile(LISTDMS &ls) {
        exit(1);
    }
  
-	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
-		fread(&p->dms.MaSach, sizeof(p->dms.MaSach), 1, f); 
-		fread(&p->dms.trangthaiDMS, sizeof(p->dms.trangthaiDMS), 1, f); 
-		fread(&p->dms.ViTri, sizeof(p->dms.ViTri), 1, f); 
-		printf("Ma sach: %s \n",p->dms.MaSach);
-		printf("Trang thai: %d \n",p->dms.trangthaiDMS);
-		printf("Vi tri: %s \n",p->dms.ViTri);
+	while(fread(&dms, sizeof(dms), 1, f)) {
+		NodeDMS_PTR p = NewNode_DMS(dms);
+		themDau(ls, p->dms);
+		printf("%s:",p->dms.MaSach);
 	}
 	fclose(f);
 	return; 
