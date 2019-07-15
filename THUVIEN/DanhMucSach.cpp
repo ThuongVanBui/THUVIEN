@@ -1,6 +1,7 @@
 #include "mylib.h"
 
 char MENU_DMS[5][30] 		= {"1.Them    ","2.Xoa     ","3.Sua     ","4.Xem DS     ","5.Luu tep     " };
+char MENU_XOA_DMS[4][30] 		= {"1.Xoa Dau    ","2.Xoa Cuoi     ","3.Xoa tuy chon     ","4.Xoa het     " };
 
 enum TrangThaiDMS {
 	DUOCMUON = 0,
@@ -60,6 +61,18 @@ void themDau(LISTDMS &lsDMS, DanhMucSach dms) {
 	}
 }
 
+int XoaDau(LISTDMS &lsDMS) {
+	NodeDMS_PTR p;
+	if (Rong(lsDMS) == 0) {
+		printf("Danh sach rong");
+		return 0;
+	} else {
+		p = lsDMS.dmsFirst;
+		lsDMS.dmsFirst = p->dmsNext;
+		delete(p);
+		return 1;
+	}
+}
 
 void NhapSach(LISTDMS &ls, char *s) {
 	int c;
@@ -70,16 +83,22 @@ void NhapSach(LISTDMS &ls, char *s) {
 		clrscr();
 		printf("Nhap ma sach:");
 	NHAPMA:
-		strcpy(item.MaSach,InputType(20,endchar,1));
+		strcpy(item.MaSach,InputType(21,endchar,1));
 		if (strcmp(item.MaSach,"0") == 0) {
 			break;
-		}	
+		}
+		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");
 	NHAPTT:
-		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");		
-		item.trangthaiDMS= atoi(InputType(1,endchar,2));		
+		c = atoi(InputType(1,endchar,2));
+		if (c == 0 || c == 1 || c == 2 ) {
+			item.trangthaiDMS= c;		
+		} else {
+			goto NHAPTT;
+		}
 	NHAPVITRI:
 		printf("\nNhap vi tri:");
 		strcpy(item.ViTri,InputType(51,endchar,1));
+	
 	themDau(ls, item);	
 	};	
 }
@@ -88,7 +107,15 @@ void NhapSach(LISTDMS &ls, char *s) {
 void XuatDMS(LISTDMS ls) {
 	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
 		printf("\nMa sach: %s", p->dms.MaSach);
-		printf("\nTrang thai: %d", p->dms.trangthaiDMS);
+		//Check trang thai
+		if (p->dms.trangthaiDMS == 0){
+			printf("\nTrang thai: Duoc Muon.");
+		} else if (p->dms.trangthaiDMS == 1){
+			printf("\nTrang thai: Da Duoc Muon.");
+		} else {
+			printf("\nTrang thai: Da Thanh Ly.");
+		}
+	
 		printf("\nVi tri: %s\n", p->dms.ViTri);
 	}
 }
@@ -128,9 +155,9 @@ void docFile(LISTDMS &ls) {
 	while(fread(&dms, sizeof(dms), 1, f)) {
 		NodeDMS_PTR p = NewNode_DMS(dms);
 		themDau(ls, p->dms);
-		printf("%s:",p->dms.MaSach);
 	}
 	fclose(f);
+	XuatDMS(ls);
 	return; 
 }
 
@@ -152,13 +179,21 @@ void HienThiMenu(LISTDMS &ls) {
 	    		clrscr();
 	    		NhapSach(ls, s);
 				break;
-	    case 2:	printf(MENU_DMS[1]); 
-	          break;
-	    case 3: printf(MENU_DMS[2]); 
-	         break;
-	    case 4://printf(MENU_DMS[3]);
+	    case 2: 
+
+				clrscr();
+	    				if (XoaDau(ls) == 1){
+					XuatDMS(ls); 
+
+				}
+								getch();
+				break;
+	    case 3: 				clrscr();
+				XuatDMS(ls); 
+				getch();
+				break;
+	    case 4:
 			printf("\n");
-//			XuatDMS(ls); 
 			docFile(ls);
 			getch();
 	         break;
