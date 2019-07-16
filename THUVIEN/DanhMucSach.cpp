@@ -121,7 +121,7 @@ void luuFile(LISTDMS ls) {
 //		fwrite(&p->dms.MaSach, sizeof(p->dms.MaSach), 1, f); 
 //		fwrite(&p->dms.trangthaiDMS, sizeof(p->dms.trangthaiDMS), 1, f); 
 //		fwrite(&p->dms.ViTri, sizeof(p->dms.ViTri), 1, f); 
-		fwrite(&p->dms,sizeof(DanhMucSach),1,f);
+		fwrite(&p->dms,sizeof(DanhMucSach),1,f);//
 	}
 	getch();
 	fclose(f);
