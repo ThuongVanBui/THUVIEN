@@ -60,7 +60,7 @@ void themDau(LISTDMS &lsDMS, DanhMucSach dms) {
 		
 	}
 }
-void themSau(LISTDMS &lsDMS,DanhMucSach dms){
+void themCuoi(LISTDMS &lsDMS,DanhMucSach dms){
 	NodeDMS_PTR p = NewNode_DMS(dms);
 	if(Rong(lsDMS)==0){
 		lsDMS.dmsFirst = lsDMS.dmsLast = p;
@@ -69,8 +69,40 @@ void themSau(LISTDMS &lsDMS,DanhMucSach dms){
 		lsDMS.dmsLast = p;
 	}
 }
-
-
+void ThemSauNode(LISTDMS &lsDMS,DanhMucSach dms,char *masach_node_truoc){
+	NodeDMS_PTR info= NewNode_DMS(dms);
+	for(NodeDMS_PTR p=lsDMS.dmsFirst;p!=NULL;p=p->dmsNext){
+		if(strcmp(p->dms.MaSach,masach_node_truoc)==0){
+			info->dmsNext=p->dmsNext->dmsNext;
+			p->dmsNext=info;
+		}
+	}
+}
+void xoaDau(LISTDMS &lsDMS){
+	if(Rong(lsDMS)==0){
+		return;
+	}
+	NodeDMS_PTR p = lsDMS.dmsFirst;
+	lsDMS.dmsFirst=lsDMS.dmsFirst->dmsNext;
+	delete p;
+}
+void xoaCuoi(LISTDMS &lsDMS){
+	if(Rong(lsDMS)==0){
+		return;
+	}
+	if(strcmp(lsDMS.dmsFirst->dms.MaSach,lsDMS.dmsLast->dms.MaSach)==0){
+		lsDMS.dmsFirst=lsDMS.dmsLast=NULL;
+		return;
+	}
+	for(NodeDMS_PTR  p=lsDMS.dmsFirst;p!=NULL;p=p->dmsNext){
+		if(strcmp(p->dmsNext->dms.MaSach,lsDMS.dmsLast->dms.MaSach)==0){
+			NodeDMS_PTR _delete  = p->dmsNext;
+			delete _delete;
+			lsDMS.dmsLast = p;
+			return;
+		}
+	}
+}
 void NhapSach(LISTDMS &ls, char *s) {
 	int c;
 	int vitri;
@@ -189,6 +221,9 @@ void HienThiMenu(LISTDMS &ls) {
 	    		NhapSach(ls, s);
 				break;
 	    case 2:	printf(MENU_DMS[1]); 
+	    	//	xoaDau(ls);
+	    		xoaCuoi(ls);
+	    	//	luuFile(ls);
 	          break;
 	    case 3: printf(MENU_DMS[2]); 
 	         break;
@@ -204,10 +239,11 @@ void HienThiMenu(LISTDMS &ls) {
 	    	luuFile(ls);
 	    	break;
 	     default: printf("Wrong Choice. Enter again\n");
+	     getch();
 	         break;
 	 	} 
   	clrscr();
-	} while (choice != 0);
+	} while (endchar != ESC);
 }
 
 int main() {
