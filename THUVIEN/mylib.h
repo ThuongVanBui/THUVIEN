@@ -139,7 +139,9 @@ char* InputType(int n,int &endchar,int type){
 		if(type==2)
 			if(!isdigit(c)) continue;
 		if(type==3)
-			if(!isalpha(c)) continue;		
+			if(!isalpha(c)) continue;
+		if(type==4)
+			if(!isdigit(c) || c < 48 || c > 50) continue;
 		printf("%c",c);
 		s[i++] = c;
 		if(i==n)

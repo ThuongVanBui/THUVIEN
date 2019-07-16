@@ -81,20 +81,16 @@ void NhapSach(LISTDMS &ls, char *s) {
 	while(true) {
 		DanhMucSach item;
 		clrscr();
-		printf("Nhap ma sach:");
 	NHAPMA:
+		printf("Nhap ma sach:");
 		strcpy(item.MaSach,InputType(21,endchar,1));
 		if (strcmp(item.MaSach,"0") == 0) {
 			break;
 		}
-		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");
+
 	NHAPTT:
-		c = atoi(InputType(1,endchar,2));
-		if (c == 0 || c == 1 || c == 2 ) {
-			item.trangthaiDMS= c;		
-		} else {
-			goto NHAPTT;
-		}
+		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");
+		item.trangthaiDMS= atoi(InputType(1,endchar,4));;		
 	NHAPVITRI:
 		printf("\nNhap vi tri:");
 		strcpy(item.ViTri,InputType(51,endchar,1));
@@ -136,6 +132,13 @@ void luuFile(LISTDMS ls) {
 		fwrite(&p->dms.ViTri, sizeof(p->dms.ViTri), 1, f); 
 
 	}
+	
+	NodeDMS_PTR p = ls.dmsLast;
+	fwrite(&p->dms.MaSach, sizeof(p->dms.MaSach), 1, f); 
+	fwrite(&p->dms.trangthaiDMS, sizeof(p->dms.trangthaiDMS), 1, f); 
+	fwrite(&p->dms.ViTri, sizeof(p->dms.ViTri), 1, f); 
+
+	
 	fclose(f);
 	return; 
 }
