@@ -75,25 +75,47 @@ void NhapSach(LISTDMS &ls, char *s) {
 	int c;
 	int vitri;
 	int endchar;
+	char *maSach;
 	char *trangThai;
+	char *viTri;
 	while(true) {
 		DanhMucSach item;
-		clrscr();
-		printf("Nhap ma sach:");
+		clrscr();	
 	NHAPMA:
-		strcpy(item.MaSach,InputType(20,endchar,1));
-		if (strcmp(item.MaSach,"0") == 0) {
+		printf("\nNhap ma sach:");
+		maSach =InputType(20,endchar,1);
+		if(strlen(maSach)==0){
+			printf("Ma sach khong duoc rong");
+			goto NHAPMA;
+		}
+		if (strcmp(maSach,"0") == 0) {
 			break;
-		}	
+		}
+		strcpy(item.MaSach,maSach);	
 	NHAPTT:
 		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");		
-		trangThai= (InputType(1,endchar,2));	
-		if(strlen(trangThai)==0)
+		trangThai= InputType(1,endchar,2);
+		int _trangThai = atoi(trangThai);	
+		
+		if(strlen(trangThai)==0){
+			printf("Trang Thai khong duoc rong");
 			goto NHAPTT;
-		item.trangthaiDMS = atoi(trangThai);
+		}
+		if(_trangThai<0 || _trangThai>2)
+		{
+			printf("Xin nhap 0 hoac 1 hoac 2");
+			goto NHAPTT;
+		}
+		item.trangthaiDMS = _trangThai;
 	NHAPVITRI:
 		printf("\nNhap vi tri:");
-		strcpy(item.ViTri,InputType(51,endchar,1));
+		viTri = InputType(51,endchar,1);
+		if(strlen(viTri)==0){
+			printf("Vi Tri khong duoc rong");
+			goto NHAPVITRI;
+		}
+		strcpy(item.ViTri,viTri);
+		
 	themDau(ls, item);	
 	};	
 }
