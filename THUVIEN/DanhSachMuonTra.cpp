@@ -60,6 +60,15 @@ int checkMaDMS(LISTMT ls, char *masach){
 	}
 }
 
+int demDS(LISTMT ls){
+	int dem = 0;
+	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
+		dem += 1;
+	}
+	
+	return dem;
+}
+
 void themDau(LISTMT &l, DanhSachMuonTra mt) {
 	NodeMT_PTR p = newNodeMT(mt);
 	if (Rong(l) == 0) {
@@ -71,6 +80,100 @@ void themDau(LISTMT &l, DanhSachMuonTra mt) {
 	l.mtFirst->mtLeft = p;
 	l.mtFirst = p;
 	return;
+}
+
+void themCuoi(LISTMT &l, DanhSachMuonTra mt) {
+	NodeMT_PTR p = newNodeMT(mt);
+	if (Rong(l) == 0) {
+		themDau(l,mt);
+		
+	}
+	
+	l.mtLast->mtRight = p;
+	p->mtLeft = l.mtLast;
+	l.mtLast = p;
+	return;
+	
+}
+
+void themBatKiRIGHT(LISTMT &l, DanhSachMuonTra mt, int vitri) {
+	NodeMT_PTR p = newNodeMT(mt);
+	NodeMT_PTR q;
+	int dem = 0;
+	if (Rong(l) == 0 || vitri == 0) {
+		themDau(l, mt);
+		return;
+	} else if (vitri > demDS(l)) {
+		themCuoi(l, mt);
+		return;
+	}
+	
+	for (NodeMT_PTR before = l.mtFirst; before != NULL; before = before->mtRight) {
+		if (dem == vitri) {
+			q->mtRight = p;
+			p->mtLeft = q;
+			p->mtRight = before;
+			before->mtLeft = p;
+			return;
+		}
+		
+		q = before;
+		dem += 1;
+
+	}
+	
+}
+
+void themBatKiLEFT(LISTMT &l, DanhSachMuonTra mt, int vitri) {
+	NodeMT_PTR p = newNodeMT(mt);
+	NodeMT_PTR q;
+	int dem = demDS(l);
+	if (Rong(l) == 0 || vitri == 0) {
+		themDau(l, mt);
+		return;
+	} else if (vitri > demDS(l)) {
+		themCuoi(l, mt);
+		return;
+	}
+	
+	for (NodeMT_PTR after = l.mtLast; after != NULL; after = after->mtLeft) {
+		dem -= 1;
+
+		if (dem == vitri) {
+			p->mtRight = q;
+			q->mtLeft = p;
+			p->mtLeft = after;
+			after->mtRight = p;
+
+			return;
+		}
+		
+		q = after;
+
+	}
+	
+}
+
+
+void xoaDauMT(LISTMT &ls) {
+	NodeMT_PTR p = ls.mtFirst;
+	if (Rong(ls) == 0) {
+		printf("Danh sach rong!");
+		return;
+	} else {
+		if (ls.mtFirst->mtRight == NULL) {
+			ls.mtFirst = ls.mtLast = NULL;
+			
+		} else {
+			p->mtRight = ls.mtFirst;
+			ls.mtFirst->mtLeft = NULL;
+		}
+		
+		delete(p);
+	}
+	
+		
+
 }
 
 
@@ -133,8 +236,7 @@ void NhapSach(LISTMT &ls, char *s) {
 		}
 		item.trangthaiMT = _trangThai;
 
-		
-	themDau(ls, item);	
+		themDau(ls,item);
 	};	
 }
 
@@ -145,14 +247,14 @@ void XuatDMS(LISTMT ls) {
 		printf("\nMa sach: %s", p->DSMT.MaSach);
 		switch (p->DSMT.trangthaiMT) {
 			case DANGMUON:
-				printf("\nTrang thai: dang muon");
+				printf("\nTrang thai: Dang muon");
 				break;
 			case DATRA:
 				printf("\nTrang thai: Da tra");
 				break;
 
 			case LAMMAT:
-				printf("\nTrang thai: lat mat");
+				printf("\nTrang thai: Lat mat");
 				break;
 
 		}
