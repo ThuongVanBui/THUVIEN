@@ -1,6 +1,6 @@
 #include "mylib.h"
 
-char MENU_DMS[5][30] 		= {"1.Them    ","2.Xoa     ","3.Sua     ","4.Xem DS     ","5.Luu tep     " };
+char MENU_DMS[5][30] 		= {"1.Them    ","2.Xoa     ","3.Them item theo vi tri     ","4.Xem DS     ","5.Luu tep     " };
 
 enum TrangThaiMT {
 	DANGMUON = 0,
@@ -85,8 +85,8 @@ void themDau(LISTMT &l, DanhSachMuonTra mt) {
 void themCuoi(LISTMT &l, DanhSachMuonTra mt) {
 	NodeMT_PTR p = newNodeMT(mt);
 	if (Rong(l) == 0) {
-		themDau(l,mt);
-		
+		l.mtFirst = l.mtLast = p;
+		return;		
 	}
 	
 	l.mtLast->mtRight = p;
@@ -103,7 +103,7 @@ void themBatKiRIGHT(LISTMT &l, DanhSachMuonTra mt, int vitri) {
 	if (Rong(l) == 0 || vitri == 0) {
 		themDau(l, mt);
 		return;
-	} else if (vitri > demDS(l)) {
+	} if (vitri > demDS(l)) {
 		themCuoi(l, mt);
 		return;
 	}
@@ -122,6 +122,34 @@ void themBatKiRIGHT(LISTMT &l, DanhSachMuonTra mt, int vitri) {
 
 	}
 	
+}
+void _themBatKiRight(LISTMT &l,DanhSachMuonTra mt,int vitri){
+	NodeMT_PTR p =  newNodeMT(mt);// tao node can them
+	NodeMT_PTR before;// node dung truoc node p;
+	int dem = 1 ;// bien tim vi tri
+	if(Rong(l)== 0 || vitri ==0 ){// neu ds rong hoac vi tri can them = 0->  them dau
+		themDau(l,mt);
+		printf("them dau\n");
+		return;
+	}
+	if(vitri > demDS(l)|| vitri<0){// neu ma vi trí can them 0 co trong ds thi them cuoi
+		themCuoi(l,mt);
+		printf("them cuoi\n");
+		return;
+	}
+	for(NodeMT_PTR k=l.mtFirst;k!=NULL;k=k->mtRight){// duyet tu dau -> cuoi ds
+		if(dem==vitri){
+			p->mtRight = k;// khi them node p thi k se la node sau node p
+			k->mtLeft = p;// tao lk giua node sau p() va p
+			
+			before->mtRight = p;
+			p->mtLeft = before;// tao lk giua node truoc p va p
+			printf("them bat ki\n");
+			return;
+		}
+		dem++;
+		before = k;//neu khong tim thay vi tri phu hop cap nhat lai node before;
+	}
 }
 
 void themBatKiLEFT(LISTMT &l, DanhSachMuonTra mt, int vitri) {
@@ -151,8 +179,8 @@ void themBatKiLEFT(LISTMT &l, DanhSachMuonTra mt, int vitri) {
 		q = after;
 
 	}
-	
 }
+
 
 
 void xoaDauMT(LISTMT &ls) {
@@ -177,7 +205,75 @@ void xoaDauMT(LISTMT &ls) {
 }
 
 
-
+DanhSachMuonTra _NhapDuLieuSach(LISTMT &ls){
+	int endchar;
+	char *maSach;
+	char *trangThai;
+	char *NgayMuon;
+	
+	DanhSachMuonTra item;
+		clrscr();	
+	NHAPMA:
+		printf("\nNhap ma sach:");
+		maSach =InputType(20,endchar,1);
+		if(strlen(maSach)==0){
+			printf("Ma sach khong duoc rong");
+			goto NHAPMA;
+		}
+		if (checkMaDMS(ls, maSach) == 1) {
+			printf("Ma sach trung");
+			goto NHAPMA;
+		}
+		
+		if (strcmp(maSach,"0") == 0) {
+			//break;
+		}
+		strcpy(item.MaSach,maSach);
+	NHAPNGAYMUON:
+		printf("\nNhap ngay muon (dd/MM/yyyy):");
+		NgayMuon = InputType(11,endchar,1);
+		if(strlen(NgayMuon)==0){
+			printf("Ngay muon khong duoc rong");
+			goto NHAPNGAYMUON;
+		}
+		strcpy(item.NgayMuon,NgayMuon);
+	NHAPNGAYTRA:
+		printf("\nNhap ngay muon (dd/MM/yyyy):");
+		NgayMuon = InputType(11,endchar,1);
+		if(strlen(NgayMuon)==0){
+			printf("Ngay tra khong duoc rong");
+			goto NHAPNGAYTRA;
+		}
+		strcpy(item.NgayTra,NgayMuon);		
+	NHAPTT:
+		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");		
+		trangThai= InputType(1,endchar,2);
+		int _trangThai = atoi(trangThai);	
+		
+		if(strlen(trangThai)==0){
+			printf("Trang Thai khong duoc rong");
+			goto NHAPTT;
+		}
+		if(_trangThai<0 || _trangThai>2)
+		{
+			printf("Xin nhap 0 hoac 1 hoac 2");
+			goto NHAPTT;
+		}
+		item.trangthaiMT = _trangThai;
+		
+	return item;
+}
+void _NhapSachTheoViTri(LISTMT &l){
+	int endchar;
+	printf("\nNhap du lieu sach: \n");
+	DanhSachMuonTra item= _NhapDuLieuSach(l);
+	printf("\nXin nhap vi tri can them: ");
+	char *pos = InputType(3,endchar,2);
+	printf("%s",pos);
+	printf("\n");
+	_themBatKiRight(l,item,atoi(pos));
+	getch();
+}
 void NhapSach(LISTMT &ls, char *s) {
 	int c;
 	int vitri;
@@ -260,6 +356,7 @@ void XuatDMS(LISTMT ls) {
 		}
 		printf("\nNgay muon: %s", p->DSMT.NgayMuon);
 		printf("\nNgay tra: %s", p->DSMT.NgayTra);
+		printf("\n");
 	}
 }
 
@@ -294,7 +391,7 @@ void docFile(LISTMT &ls) {
    }
  
 	while(fread(&mt, sizeof(mt), 1, f)) {
-		themDau(ls, mt);	
+		themCuoi(ls, mt);	
 	}
 	fclose(f);
 	return; 
@@ -358,6 +455,11 @@ void HienThiMenu(LISTMT &ls) {
 	          break;
 	    case 3:
 	    //	MenuXoaDMS(ls);
+	    	printf("\n");
+	    	_NhapSachTheoViTri(ls);
+	    	printf("\n");
+	    	XuatDMS(ls);
+	    	getch(); 
 	        break;
 	    case 4:
 			printf("\n");
@@ -369,9 +471,9 @@ void HienThiMenu(LISTMT &ls) {
 	    	break;
 	     default: printf("Wrong Choice. Enter again\n");
 	     getch();
-	         break;
+	         
 	 	} 
-  	clrscr();
+  	clrscr(); 	
 	} while (endchar != ESC);
 }
 
