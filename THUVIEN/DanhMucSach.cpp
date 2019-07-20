@@ -1,6 +1,7 @@
 #include "mylib.h"
 
 char MENU_DMS[5][30] 		= {"1.Them    ","2.Xoa     ","3.Sua     ","4.Xem DS     ","5.Luu tep     " };
+char MENU_XOA_DMS[4][30] 		= {"1.Xoa Dau    ","2.Xoa Cuoi    ","3.Xoa Bat Ki     ","4.Xoa Het     " };
 
 enum TrangThaiDMS {
 	DUOCMUON = 0,
@@ -45,12 +46,21 @@ NodeDMS_PTR NewNode_DMS(DanhMucSach dm){
 	return p;
 }
 
+
+int checkMaDMS(LISTDMS ls, char masach[]){
+	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
+		if (strcmp(p->dms.MaSach, masach) == 0){
+			return 1;
+		}else{
+			return 0;
+		}
+	}
+}
+
 void themDau(LISTDMS &lsDMS, DanhMucSach dms) {
 	NodeDMS_PTR p;
-	p = new NodeDMS;
-	p->dms = dms;
-	p->dmsNext = NULL;
-	
+	p = NewNode_DMS(dms);
+
 	if (Rong(lsDMS) == 0) {
 		lsDMS.dmsFirst = lsDMS.dmsLast = p;
 		
@@ -85,6 +95,7 @@ void xoaDau(LISTDMS &lsDMS){
 	NodeDMS_PTR p = lsDMS.dmsFirst;
 	lsDMS.dmsFirst=lsDMS.dmsFirst->dmsNext;
 	delete p;
+	
 }
 void xoaCuoi(LISTDMS &lsDMS){
 	if(Rong(lsDMS)==0){
@@ -103,6 +114,37 @@ void xoaCuoi(LISTDMS &lsDMS){
 		}
 	}
 }
+
+void xoaBatKi_DMS(LISTDMS &ls, char *MaDMS ) {
+	if (Rong(ls) == 0) {
+		return;
+	}
+	NodeDMS_PTR q;
+	
+	for (NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
+		if (strcmp(p->dms.MaSach,MaDMS) == 0) {
+			if (strcmp(p->dms.MaSach,ls.dmsFirst->dms.MaSach) == 0) {
+				xoaDau(ls);
+				return;
+			};
+			q->dmsNext = p->dmsNext;
+			delete(p);
+			return;
+		}
+		q = p;
+	}
+	
+}
+
+void xoaHet(LISTDMS &ls) {
+	if (Rong(ls) == 0) {
+		return;
+	}
+	
+	ls.dmsFirst = ls.dmsLast = NULL;
+
+}
+
 void NhapSach(LISTDMS &ls, char *s) {
 	int c;
 	int vitri;
@@ -120,6 +162,11 @@ void NhapSach(LISTDMS &ls, char *s) {
 			printf("Ma sach khong duoc rong");
 			goto NHAPMA;
 		}
+		if (checkMaDMS(ls, maSach) == 1) {
+			printf("Ma sach trung");
+			goto NHAPMA;
+		}
+		
 		if (strcmp(maSach,"0") == 0) {
 			break;
 		}
@@ -154,9 +201,22 @@ void NhapSach(LISTDMS &ls, char *s) {
 
 
 void XuatDMS(LISTDMS ls) {
+	clrscr();
 	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
 		printf("\nMa sach: %s", p->dms.MaSach);
-		printf("\nTrang thai: %d", p->dms.trangthaiDMS);
+		switch (p->dms.trangthaiDMS) {
+			case DUOCMUON:
+				printf("\nTrang thai: Duoc muon");
+				break;
+			case DADUOCMUON:
+				printf("\nTrang thai: Da muon");
+				break;
+
+			case DATHANHLY:
+				printf("\nTrang thai: Da thanh ly");
+				break;
+
+		}
 		printf("\nVi tri: %s\n", p->dms.ViTri);
 	}
 }
@@ -172,10 +232,7 @@ void luuFile(LISTDMS ls) {
    }
  
 	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
-//		fwrite(&p->dms.MaSach, sizeof(p->dms.MaSach), 1, f); 
-//		fwrite(&p->dms.trangthaiDMS, sizeof(p->dms.trangthaiDMS), 1, f); 
-//		fwrite(&p->dms.ViTri, sizeof(p->dms.ViTri), 1, f); 
-		fwrite(&p->dms,sizeof(DanhMucSach),1,f);//
+		fwrite(&p->dms,sizeof(DanhMucSach),1,f);
 	}
 	getch();
 	fclose(f);
@@ -185,7 +242,6 @@ void luuFile(LISTDMS ls) {
 
 void docFile(LISTDMS &ls) {
 	clrscr();
-	khoiTaoDS(ls);
 	DanhMucSach dms;
 	NodeDMS_PTR p ;
 	int i = 0;
@@ -200,6 +256,40 @@ void docFile(LISTDMS &ls) {
 	}
 	fclose(f);
 	return; 
+}
+
+
+void MenuXoaDMS(LISTDMS &ls){
+	clrscr();
+	int choice;
+	int endchar;
+	char *maDMS;
+	do{
+		for (int i = 0; i < 5; i++){
+			printf(MENU_XOA_DMS[i]);
+		}
+		choice = atoi(InputType(1,endchar,2));
+		switch(choice){
+		case 1:
+			xoaDau(ls);
+			break;
+		case 2:
+			xoaCuoi(ls);
+			break;
+		case 3:
+			printf("Nhap ma sach can xoa:");
+			maDMS = InputType(20, endchar,1);
+			xoaBatKi_DMS(ls,maDMS);
+			XuatDMS(ls);
+
+			break;
+		case 4:
+			xoaHet(ls);
+			XuatDMS(ls);
+			break;
+		} 
+		
+	}while(endchar != ESC);
 }
 
 void HienThiMenu(LISTDMS &ls) {
@@ -225,12 +315,10 @@ void HienThiMenu(LISTDMS &ls) {
 	    		xoaCuoi(ls);
 	    	//	luuFile(ls);
 	          break;
-	    case 3: printf(MENU_DMS[2]); 
-	         break;
-	    case 4://printf(MENU_DMS[3]);
-			
-			printf("\n");
-			docFile(ls);
+	    case 3:
+	    	MenuXoaDMS(ls);
+	        break;
+	    case 4:
 			printf("\n");
 			XuatDMS(ls); 
 			getch();
@@ -246,9 +334,12 @@ void HienThiMenu(LISTDMS &ls) {
 	} while (endchar != ESC);
 }
 
+
+
+
 int main() {
 	LISTDMS ls;
 	khoiTaoDS(ls);
-//	XuatDMS(ls);
+	docFile(ls);
 	HienThiMenu(ls);
 }

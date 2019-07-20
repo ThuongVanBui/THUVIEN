@@ -1,12 +1,12 @@
 #include "mylib.h"
 
+char MENU_DMS[5][30] 		= {"1.Them    ","2.Xoa     ","3.Sua     ","4.Xem DS     ","5.Luu tep     " };
+
 enum TrangThaiMT {
 	DANGMUON = 0,
 	DATRA = 1,
 	LAMMAT = 2
 };
-
-
 
 typedef struct DanhSachMuonTra {
 	char MaSach[20];
@@ -39,13 +39,243 @@ int Rong(LISTMT l) {
 }
 
 void khoiTao(LISTMT &l) {
-	
+	l.mtFirst = l.mtLast = NULL;
+}
+
+NodeMT_PTR newNodeMT(DanhSachMuonTra mt) {
+	NodeMT_PTR p = new NodeMT;
+	p->DSMT = mt;
+	p->mtLeft = NULL;
+	p->mtRight = NULL;
+	return p;
+}
+
+int checkMaDMS(LISTMT ls, char *masach){
+	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
+		if (strcmp(p->DSMT.MaSach, masach) == 0){
+			return 1;
+		}else{
+			return 0;
+		}
+	}
 }
 
 void themDau(LISTMT &l, DanhSachMuonTra mt) {
+	NodeMT_PTR p = newNodeMT(mt);
+	if (Rong(l) == 0) {
+		l.mtFirst = l.mtLast = p;
+		return;
+	}
 	
+	p->mtRight = l.mtFirst;
+	l.mtFirst->mtLeft = p;
+	l.mtFirst = p;
+	return;
+}
+
+
+
+void NhapSach(LISTMT &ls, char *s) {
+	int c;
+	int vitri;
+	int endchar;
+	char *maSach;
+	char *trangThai;
+	char *NgayMuon;
+	while(true) {
+		DanhSachMuonTra item;
+		clrscr();	
+	NHAPMA:
+		printf("\nNhap ma sach:");
+		maSach =InputType(20,endchar,1);
+		if(strlen(maSach)==0){
+			printf("Ma sach khong duoc rong");
+			goto NHAPMA;
+		}
+		if (checkMaDMS(ls, maSach) == 1) {
+			printf("Ma sach trung");
+			goto NHAPMA;
+		}
+		
+		if (strcmp(maSach,"0") == 0) {
+			break;
+		}
+		strcpy(item.MaSach,maSach);
+	NHAPNGAYMUON:
+		printf("\nNhap ngay muon (dd/MM/yyyy):");
+		NgayMuon = InputType(11,endchar,1);
+		if(strlen(NgayMuon)==0){
+			printf("Ngay muon khong duoc rong");
+			goto NHAPNGAYMUON;
+		}
+		strcpy(item.NgayMuon,NgayMuon);
+	NHAPNGAYTRA:
+		printf("\nNhap ngay muon (dd/MM/yyyy):");
+		NgayMuon = InputType(11,endchar,1);
+		if(strlen(NgayMuon)==0){
+			printf("Ngay tra khong duoc rong");
+			goto NHAPNGAYTRA;
+		}
+		strcpy(item.NgayTra,NgayMuon);		
+	NHAPTT:
+		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");		
+		trangThai= InputType(1,endchar,2);
+		int _trangThai = atoi(trangThai);	
+		
+		if(strlen(trangThai)==0){
+			printf("Trang Thai khong duoc rong");
+			goto NHAPTT;
+		}
+		if(_trangThai<0 || _trangThai>2)
+		{
+			printf("Xin nhap 0 hoac 1 hoac 2");
+			goto NHAPTT;
+		}
+		item.trangthaiMT = _trangThai;
+
+		
+	themDau(ls, item);	
+	};	
+}
+
+
+void XuatDMS(LISTMT ls) {
+	clrscr();
+	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
+		printf("\nMa sach: %s", p->DSMT.MaSach);
+		switch (p->DSMT.trangthaiMT) {
+			case DANGMUON:
+				printf("\nTrang thai: dang muon");
+				break;
+			case DATRA:
+				printf("\nTrang thai: Da tra");
+				break;
+
+			case LAMMAT:
+				printf("\nTrang thai: lat mat");
+				break;
+
+		}
+		printf("\nNgay muon: %s", p->DSMT.NgayMuon);
+		printf("\nNgay tra: %s", p->DSMT.NgayTra);
+	}
+}
+
+
+void luuFile(LISTMT ls) {
+	clrscr();
+	int i = 0;
+	FILE *f;
+	 if ((f = fopen("DanhSachMuonTra.bin","wb+") )== NULL){
+       printf("Error! opening file");
+       exit(1);
+   }
+ 
+	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
+		fwrite(&p->DSMT,sizeof(DanhSachMuonTra),1,f);
+	}
+	getch();
+	fclose(f);
+	return; 
+}
+
+
+void docFile(LISTMT &ls) {
+	clrscr();
+	DanhSachMuonTra mt;
+	NodeMT_PTR p ;
+	int i = 0;
+	FILE *f;
+	 if ((f = fopen("DanhSachMuonTra.bin","rb") )== NULL){
+       printf("Error! opening file");
+       exit(1);
+   }
+ 
+	while(fread(&mt, sizeof(mt), 1, f)) {
+		themDau(ls, mt);	
+	}
+	fclose(f);
+	return; 
+}
+
+//void MenuXoaDMS(LISTMT &ls){
+//	clrscr();
+//	int choice;
+//	int endchar;
+//	char *maDMS;
+//	do{
+//		for (int i = 0; i < 5; i++){
+//			printf(MENU_XOA_DMS[i]);
+//		}
+//		choice = atoi(InputType(1,endchar,2));
+//		switch(choice){
+//		case 1:
+//			xoaDau(ls);
+//			break;
+//		case 2:
+//			xoaCuoi(ls);
+//			break;
+//		case 3:
+//			printf("Nhap ma sach can xoa:");
+//			maDMS = InputType(20, endchar,1);
+//			xoaBatKi_DMS(ls,maDMS);
+//			XuatDMS(ls);
+//
+//			break;
+//		case 4:
+//			xoaHet(ls);
+//			XuatDMS(ls);
+//			break;
+//		} 
+//		
+//	}while(endchar != ESC);
+//}
+
+void HienThiMenu(LISTMT &ls) {
+	int choice;
+	int endchar;
+	char *s;	
+	do {
+		for (int i = 0; i < 5; i++) {
+			printf(MENU_DMS[i]);
+		}
+		gotoxy(20,20);
+		printf("ESC: Thoat");
+		gotoxy(0,1);	
+	 	choice = atoi(InputType(1,endchar,2));
+
+	 	switch (choice) {
+	    case 1: 
+	    		clrscr();
+	    		NhapSach(ls, s);
+				break;
+	    case 2:	printf(MENU_DMS[1]); 
+	    	//	xoaDau(ls);
+	    //		xoaCuoi(ls);
+	    	//	luuFile(ls);
+	          break;
+	    case 3:
+	    //	MenuXoaDMS(ls);
+	        break;
+	    case 4:
+			printf("\n");
+			XuatDMS(ls); 
+			getch();
+	         break;
+	    case 5:
+	   		luuFile(ls);
+	    	break;
+	     default: printf("Wrong Choice. Enter again\n");
+	     getch();
+	         break;
+	 	} 
+  	clrscr();
+	} while (endchar != ESC);
 }
 
 int main() {
-	
+	LISTMT ls;
+	khoiTao(ls);
+	docFile(ls);
+	HienThiMenu(ls);
 }
