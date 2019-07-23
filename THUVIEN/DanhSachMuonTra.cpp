@@ -274,7 +274,7 @@ void _NhapSachTheoViTri(LISTMT &l){
 	_themBatKiRight(l,item,atoi(pos));
 	getch();
 }
-void NhapSach(LISTMT &ls, char *s) {
+void NhapMT(LISTMT &ls) {
 	int c;
 	int vitri;
 	int endchar;
@@ -283,7 +283,6 @@ void NhapSach(LISTMT &ls, char *s) {
 	char *NgayMuon;
 	while(true) {
 		DanhSachMuonTra item;
-		clrscr();	
 	NHAPMA:
 		printf("\nNhap ma sach:");
 		maSach =InputType(20,endchar,1);
@@ -337,8 +336,7 @@ void NhapSach(LISTMT &ls, char *s) {
 }
 
 
-void XuatDMS(LISTMT ls) {
-	clrscr();
+void XuatDSMT(LISTMT ls) {
 	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
 		printf("\nMa sach: %s", p->DSMT.MaSach);
 		switch (p->DSMT.trangthaiMT) {
@@ -446,7 +444,7 @@ void HienThiMenu(LISTMT &ls) {
 	 	switch (choice) {
 	    case 1: 
 	    		clrscr();
-	    		NhapSach(ls, s);
+	    		NhapMT(ls);
 				break;
 	    case 2:	printf(MENU_DMS[1]); 
 	    	//	xoaDau(ls);
@@ -458,12 +456,12 @@ void HienThiMenu(LISTMT &ls) {
 	    	printf("\n");
 	    	_NhapSachTheoViTri(ls);
 	    	printf("\n");
-	    	XuatDMS(ls);
+	    	XuatDSMT(ls);
 	    	getch(); 
 	        break;
 	    case 4:
 			printf("\n");
-			XuatDMS(ls); 
+			XuatDSMT(ls); 
 			getch();
 	         break;
 	    case 5:
@@ -477,9 +475,9 @@ void HienThiMenu(LISTMT &ls) {
 	} while (endchar != ESC);
 }
 
-int main() {
-	LISTMT ls;
-	khoiTao(ls);
-	docFile(ls);
-	HienThiMenu(ls);
-}
+//int main() {
+//	LISTMT ls;
+//	khoiTao(ls);
+//	docFile(ls);
+//	HienThiMenu(ls);
+//}
