@@ -7,6 +7,8 @@
 #include <windows.h>
 #include <ctype.h>
 #include <iostream>
+#include "Marcro.h"
+
 using namespace std;
 #define Enter 13
 //const int WHITE=15;
@@ -42,6 +44,13 @@ const int BACKSPACE = 8;
 //    }
 //    return 0;  
 //}
+
+void ShowCur(bool CursorVisibility)
+{
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO cursor = { 1, CursorVisibility };
+	SetConsoleCursorInfo(handle, &cursor);
+}
 
 void gotoxy(short x,short y)
 {
@@ -150,4 +159,294 @@ char* InputType(int n,int &endchar,int type){
 	}
 	s[i]='\0';
 	return s;
+}
+
+///////////////////////////////////////////////
+
+///////////////////////////////////////////////////
+// 1800 <  NAM < 9999
+const int MAX_NAM = 9999;
+const int MIN_NAM = 1800;
+
+struct NgayThang
+{
+	int ngay;
+	int thang;
+	int nam;
+};
+typedef struct NgayThang NGAY_THANG;
+
+bool namNhuan(int year)
+{
+	return (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
+}
+
+int ngayHopLe(NGAY_THANG nt) {
+	// return 0 chi ngay sai, 1 chi thang sai , 2 chi nam sai va 3 chi ngay gio dung format
+	
+	if (nt.nam > MAX_NAM || nt.nam < MIN_NAM)
+		return 2;
+	if (nt.thang < 1 || nt.thang > 12)
+		return 1;
+	if (nt.ngay < 1 || nt.ngay > 31)
+		return 0;
+
+	// xu ly thang 2 voi nam  nhuan
+	if (nt.thang == 2)
+	{
+		if (namNhuan(nt.nam))
+		{
+			if (nt.ngay > 29)
+				return 0;
+		}
+		else
+		{
+			if (nt.ngay > 28)
+			{
+				return 0;
+			}
+		}
+	}
+	if ((nt.thang == 4 || nt.thang == 6 || nt.thang == 9 || nt.thang == 11) && (nt.ngay > 30))
+	{
+		return 0;
+	}
+	return 3;
+}
+
+void xuatNgayThang(NGAY_THANG dt, int x, int y)
+{
+	gotoxy(x, y);
+	cout << dt.ngay << " /";
+	gotoxy(x + 4, y);
+	cout << dt.thang << " /";
+	gotoxy(x + 8, y);
+	cout << dt.nam;
+}
+
+void LayNgayGioHT(NGAY_THANG &d)
+{
+	//    int ngay,thang,nam ;
+	tm *today;
+	time_t ltime;
+	time(&ltime);
+	
+	 today = localtime( &ltime );
+	
+//	localtime_s(&today, &ltime);
+	d.ngay = today->tm_mday;
+	d.thang = today->tm_mon + 1;
+	d.nam = today->tm_year + 1900;
+}
+
+int LayNamHT()
+{
+	tm *today;
+	time_t ltime;
+	time(&ltime);
+	 today = localtime( &ltime );
+//	localtime_s(&today, &ltime);
+	return (today->tm_year + 1900);
+}
+
+int tinhNgay(NGAY_THANG dt)
+{
+	if (dt.thang < 3) {
+		dt.nam--;
+		dt.thang += 12;
+	}
+	return 365 * dt.nam + dt.nam / 4 - dt.nam / 10 + dt.nam / 400 + (153 * dt.thang - 457) / 5 + dt.ngay - 306;
+}
+
+int KhoangCachNgay(NGAY_THANG nt1)
+{
+	NGAY_THANG nt2;
+	LayNgayGioHT(nt2);
+	return (tinhNgay(nt2) - tinhNgay(nt1));
+}
+
+int SoSanhNgay(NGAY_THANG nt1, NGAY_THANG nt2)
+{
+	return (tinhNgay(nt2) - tinhNgay(nt1));
+}
+
+
+int NhapNgayThang(NGAY_THANG &nt, int x, int y)
+{	
+	ShowCur(true);
+	int flag = 2;
+
+	LayNgayGioHT(nt);
+	NGAY_THANG temp;
+	temp.ngay = nt.ngay;
+	temp.thang = nt.thang;
+	temp.nam = nt.nam;
+
+	xuatNgayThang(nt, x, y);
+	
+	while (true)
+	{
+
+		while (_kbhit())
+		{
+			int kb_hit = _getch();
+			if (kb_hit >= 48 && kb_hit <= 57 )
+			{
+				if (flag == 0 )
+				{
+					
+					int f = kb_hit - 48;
+					temp.ngay = temp.ngay * 10 + (f);
+					if (temp.ngay > 31)
+					{
+						temp.ngay /= 10;
+						continue;
+					}
+					gotoxy(x, y);
+					cout << temp.ngay;
+					
+				}
+				else if (flag == 1)
+				{
+					
+					int f = kb_hit - 48;
+					temp.thang= temp.thang * 10 + (f);
+					if (temp.thang > 12)
+					{
+						temp.thang /= 10;
+						continue;
+					}
+					gotoxy(x + 4, y);
+					cout << temp.thang;
+				}
+				else if (flag == 2)
+				{
+					
+					int f = kb_hit - 48;
+					temp.nam = temp.nam * 10 + (f);
+					if (temp.nam > 9999)
+					{
+						temp.nam /= 10;
+						continue;
+					}
+					gotoxy(x + 8, y);
+					cout << temp.nam;
+				}
+				
+			}
+			
+			else if (kb_hit == ENTER)
+			{
+				if (flag == 0)
+				{
+
+					gotoxy(x + 4, y);
+					cout << temp.thang ;
+					flag = 1;
+				}
+				else if (flag == 1)
+				{
+
+					gotoxy(x + 8, y);
+					cout << temp.nam;
+					flag = 2;
+				}
+				else if (flag == 2)
+				{
+
+					gotoxy(x  , y);
+					cout << temp.ngay;
+					flag = 0;
+				}
+			}
+			else if (kb_hit == BACKSPACE && temp.ngay > 0 && temp.thang > 0 && temp.nam > 0)
+			{
+				cout << "\b" << " " << "\b";
+				if (flag == 0 )
+				{
+					temp.ngay /= 10;
+				}
+				
+				else if (flag == 1)
+				{
+					temp.thang /= 10;
+				}
+				else if (flag == 2)
+				{
+					temp.nam /= 10;
+				}
+			}
+			else if (kb_hit == 0)
+			{
+				kb_hit = _getch();
+				if (kb_hit == KEY_F10)
+				{
+
+					flag = ngayHopLe(temp);
+					if (flag == 3)
+					{
+						// xoa dong thong bao
+						gotoxy(x - 17, y - 1);
+						cout << "                                                  ";
+						gotoxy(x, y);
+						cout << "                      ";
+						gotoxy(x + 1, y + 1);
+						cout << "            ";
+						gotoxy(x - 17, y - 2);
+						cout << "                                                  ";
+
+						// kiem tra truong hop dac biet
+						if (KhoangCachNgay(temp) < 0)
+						{
+							return 1;
+						}
+						else
+						{
+							// chuyen du lieu ngay thang tam vao ngay thang chinh
+							nt = temp;
+							return 2;
+						}		
+					}
+					else if (flag == 0)
+					{
+						gotoxy(x + 1, y + 1);
+						cout << "Sai ngay!  ";
+						gotoxy(x, y);
+						cout << temp.ngay;
+						continue;
+					}
+					else if (flag == 1)
+					{
+						gotoxy(x + 1, y + 1);
+						cout << "Sai thang! ";
+						gotoxy(x + 4, y);
+						cout << temp.thang;
+						continue;
+					}
+					else if (flag == 2)
+					{
+						gotoxy(x + 1, y + 1);
+						cout << "Sai nam!   ";
+						gotoxy(x + 8, y);
+						cout << temp.ngay;
+						continue;
+					}
+				
+				}
+			}
+			else if (kb_hit == ESC)
+			{
+
+				// xoa dong thong bao
+				gotoxy(x - 17, y - 1);
+				cout << "                                                  ";
+				gotoxy(x, y);
+				cout << "                      ";
+				gotoxy(x - 17, y - 2);
+				cout << "                                                  ";
+				return - 1;
+			}
+			
+		}
+	}
 }

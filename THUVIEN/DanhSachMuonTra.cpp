@@ -281,6 +281,7 @@ void NhapMT(LISTMT &ls) {
 	char *maSach;
 	char *trangThai;
 	char *NgayMuon;
+	NGAY_THANG ntn;
 	while(true) {
 		DanhSachMuonTra item;
 	NHAPMA:
@@ -300,16 +301,30 @@ void NhapMT(LISTMT &ls) {
 		}
 		strcpy(item.MaSach,maSach);
 	NHAPNGAYMUON:
-		printf("\nNhap ngay muon (dd/MM/yyyy):");
-		NgayMuon = InputType(11,endchar,1);
-		if(strlen(NgayMuon)==0){
-			printf("Ngay muon khong duoc rong");
-			goto NHAPNGAYMUON;
-		}
+		LayNgayGioHT(ntn);
+		printf("\nNhap ngay muon (dd/MM/yyyy): %d/%d/%d",ntn.ngay,ntn.thang,ntn.nam);
+//		sprintf(NgayMuon, "%d", ntn.ngay);
+//		itoa(ntn.ngay,NgayMuon,2);
+		snprintf(NgayMuon, 11, "%d", 42);
+
+//		strcat(NgayMuon, ntn.ngay+"/"); // modified to append string
+//		strcat(NgayMuon, ntn.thang+"/"); // modified to append string
+//		strcat(NgayMuon, ntn.nam+""); // modified to append string
+
+				printf("%s",NgayMuon);
+
+		//NgayMuon = InputType(11,endchar,1);
+//		if(strlen(NgayMuon)==0){
+//			printf("Ngay muon khong duoc rong");
+//			goto NHAPNGAYMUON;
+//		}
 		strcpy(item.NgayMuon,NgayMuon);
+		printf("%s",NgayMuon);
 	NHAPNGAYTRA:
-		printf("\nNhap ngay muon (dd/MM/yyyy):");
-		NgayMuon = InputType(11,endchar,1);
+		printf("\nNhap ngay tra (dd/MM/yyyy):");
+//		NgayMuon = InputType(11,endchar,1);
+		int a = NhapNgayThang(ntn,wherex(),wherey()+1);
+//		NgayMuon = ;
 		if(strlen(NgayMuon)==0){
 			printf("Ngay tra khong duoc rong");
 			goto NHAPNGAYTRA;
