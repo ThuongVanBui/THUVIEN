@@ -1,21 +1,24 @@
+#include"DanhMucSach.cpp">
 #define MAXLIST 5
-typedef struct DauSach {
+struct DauSach {
 	char ISBN[6];
 	char TenSach[200];
 	int SoTrang;
 	char TacGia[100];
 	char NamXuatBan[10];
 	char TheLoai[50];
-	struct DanhMucSach *dms;
-}DauSach;
+	LISTDMS dms;
+};
+typedef struct DauSach DAUSACH;
 
 
 //Danh Sach DAU SACH - DANH SACH TUYEN TINH - MANG CONTRO
-typedef struct DAUSACH {
-	DauSach DS;
-	DauSach *nodeDS[MAXLIST];
+struct listDAUSACH {
+	int soluong;
+	DAUSACH *nodeDS[MAXLIST];
 
-}DAUSACH;
+};
+typedef struct listDAUSACH LISTDS;
 
 //int main() {
 //	
