@@ -152,7 +152,7 @@ char* InputType(int n,int &endchar,int type){
 			if(!isalpha(c)) continue;
 		if(type==4)
 			if(!isdigit(c) || c < 48 || c > 50) continue;
-		printf("%c",c);
+		printf("%c",toupper(c));
 		s[i++] = c;
 		if(i==n)
 			break;
@@ -386,14 +386,14 @@ int NhapNgayThang(NGAY_THANG &nt, int x, int y)
 					if (flag == 3)
 					{
 						// xoa dong thong bao
-						gotoxy(x - 17, y - 1);
-						cout << "                                                  ";
-						gotoxy(x, y);
-						cout << "                      ";
-						gotoxy(x + 1, y + 1);
-						cout << "            ";
-						gotoxy(x - 17, y - 2);
-						cout << "                                                  ";
+//						gotoxy(x - 17, y - 1);
+//						cout << "                                                  ";
+//						gotoxy(x, y);
+//						cout << "                      ";
+//						gotoxy(x + 1, y + 1);
+//						cout << "            ";
+//						gotoxy(x - 17, y - 2);
+//						cout << "                                                  ";
 
 						// kiem tra truong hop dac biet
 						if (KhoangCachNgay(temp) < 0)
@@ -438,12 +438,12 @@ int NhapNgayThang(NGAY_THANG &nt, int x, int y)
 			{
 
 				// xoa dong thong bao
-				gotoxy(x - 17, y - 1);
-				cout << "                                                  ";
-				gotoxy(x, y);
-				cout << "                      ";
-				gotoxy(x - 17, y - 2);
-				cout << "                                                  ";
+//				gotoxy(x - 17, y - 1);
+//				cout << "                                                  ";
+//				gotoxy(x, y);
+//				cout << "                      ";
+//				gotoxy(x - 17, y - 2);
+//				cout << "                                                  ";
 				return - 1;
 			}
 			

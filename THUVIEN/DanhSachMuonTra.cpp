@@ -10,8 +10,8 @@ enum TrangThaiMT {
 
 typedef struct DanhSachMuonTra {
 	char MaSach[20];
-	char NgayMuon[11];
-	char NgayTra[11];
+	char NgayMuon[20];
+	char NgayTra[20];
 	int trangthaiMT;
 
 };
@@ -281,7 +281,9 @@ void NhapMT(LISTMT &ls) {
 	char *maSach;
 	char *trangThai;
 	char *NgayMuon;
+	char *NgayTra;
 	NGAY_THANG ntn;
+	NGAY_THANG ntnTRA;
 	while(true) {
 		DanhSachMuonTra item;
 	NHAPMA:
@@ -302,28 +304,29 @@ void NhapMT(LISTMT &ls) {
 		strcpy(item.MaSach,maSach);
 	NHAPNGAYMUON:
 		LayNgayGioHT(ntn);
-		printf("\nNhap ngay muon (dd/MM/yyyy): %d/%d/%d",ntn.ngay,ntn.thang,ntn.nam);
-//		sprintf(NgayMuon, "%d", ntn.ngay);
-//		itoa(ntn.ngay,NgayMuon,2);
-		snprintf(NgayMuon, 11, "%d", 42);
-
-//		strcat(NgayMuon, ntn.ngay+"/"); // modified to append string
-//		strcat(NgayMuon, ntn.thang+"/"); // modified to append string
-//		strcat(NgayMuon, ntn.nam+""); // modified to append string
-
-				printf("%s",NgayMuon);
-
-		//NgayMuon = InputType(11,endchar,1);
-//		if(strlen(NgayMuon)==0){
-//			printf("Ngay muon khong duoc rong");
-//			goto NHAPNGAYMUON;
-//		}
+		sprintf(NgayMuon, "%d /%d /%d", ntn.ngay,ntn.thang,ntn.nam);
+		printf("\nNhap ngay muon (dd/MM/yyyy):%s", NgayMuon);
+		if(strlen(NgayMuon)==0){
+			printf("Ngay muon khong duoc rong");
+			goto NHAPNGAYMUON;
+		}
 		strcpy(item.NgayMuon,NgayMuon);
-		printf("%s",NgayMuon);
 	NHAPNGAYTRA:
 		printf("\nNhap ngay tra (dd/MM/yyyy):");
-//		NgayMuon = InputType(11,endchar,1);
-		int a = NhapNgayThang(ntn,wherex(),wherey()+1);
+	//	NgayMuon = InputType(11,endchar,1);
+		int check1 = NhapNgayThang(ntnTRA,wherex(),wherey());
+		printf("%d", check1);
+		if (SoSanhNgay(ntn, ntnTRA) < 0) {
+			gotoxy(0, wherey());
+			printf("                                                                             ");
+		}
+		gotoxy(0, wherey());
+		goto NHAPNGAYTRA;
+//		if (check1 == 2) {
+//			if (SoSanhNgay(ntn,ntnTRA) < 0){
+//				check1 = 1;
+//			}
+//		}
 //		NgayMuon = ;
 		if(strlen(NgayMuon)==0){
 			printf("Ngay tra khong duoc rong");
@@ -490,9 +493,9 @@ void HienThiMenu(LISTMT &ls) {
 	} while (endchar != ESC);
 }
 
-//int main() {
-//	LISTMT ls;
-//	khoiTao(ls);
-//	docFile(ls);
-//	HienThiMenu(ls);
-//}
+int main() {
+	LISTMT ls;
+	khoiTao(ls);
+	docFile(ls);
+	HienThiMenu(ls);
+}
