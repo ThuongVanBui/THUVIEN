@@ -35,8 +35,8 @@ void NhapDauSach(LISTDS &l){
 	char *TheLoai;
 	while(true){
 	NhapISBN:
-		ISBN = randomsMADS();
-		printf("\nISBN:  %d",ISBN);
+		ISBN ;
+		p
 	NhapTenSach:
 		printf("\nNhap ten sach: ");
 		TenSach = InputType(200,endchar,1);
@@ -52,5 +52,12 @@ void NhapDauSach(LISTDS &l){
 	NhapTheLoai:
 		printf("Nhap the loai : ");	
 		TheLoai = InputType(51,endchar,2);
+	NhapDMS:
+		printf("Nhap so luong sach: ");
+			
 	}
+	
+}
+int main(){
+	
 }
