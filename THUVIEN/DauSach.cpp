@@ -12,11 +12,11 @@ typedef struct DauSach {
 
 //Danh Sach DAU SACH - DANH SACH TUYEN TINH - MANG CONTRO
 typedef struct DAUSACH {
-	DauSach DS;
+	int n;
 	DauSach *nodeDS[MAXLIST];
 
 }DAUSACH;
 
-//int main() {
-//	
-//}
+int main() {
+	
+}
