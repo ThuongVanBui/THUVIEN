@@ -326,7 +326,9 @@ void HienThiMenu(LISTDMS &ls) {
 	    case 5:
 	    	luuFile(ls);
 	    	break;
-	     default: printf("Wrong Choice. Enter again\n");
+	     default: 
+		 	luuFile(ls);
+		 printf("Wrong Choice. Enter again\n");
 	     getch();
 	         break;
 	 	} 
