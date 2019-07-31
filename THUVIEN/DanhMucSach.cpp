@@ -145,7 +145,7 @@ void xoaHet(LISTDMS &ls) {
 
 }
 
-void NhapSach(LISTDMS &ls, char *s) {
+void NhapDMSach(LISTDMS &ls) {
 	int c;
 	int vitri;
 	int endchar;
@@ -154,7 +154,7 @@ void NhapSach(LISTDMS &ls, char *s) {
 	char *viTri;
 	while(true) {
 		DanhMucSach item;
-		clrscr();	
+	//	clrscr();	
 	NHAPMA:
 		printf("\nNhap ma sach:");
 		maSach =InputType(20,endchar,1);
@@ -201,7 +201,6 @@ void NhapSach(LISTDMS &ls, char *s) {
 
 
 void XuatDMS(LISTDMS ls) {
-	clrscr();
 	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
 		printf("\nMa sach: %s", p->dms.MaSach);
 		switch (p->dms.trangthaiDMS) {
@@ -308,7 +307,7 @@ void HienThiMenu(LISTDMS &ls) {
 	 	switch (choice) {
 	    case 1: 
 	    		clrscr();
-	    		NhapSach(ls, s);
+	    		NhapDMSach(ls);
 				break;
 	    case 2:	printf(MENU_DMS[1]); 
 	    	//	xoaDau(ls);
@@ -336,10 +335,10 @@ void HienThiMenu(LISTDMS &ls) {
 
 
 
-
-int main() {
-	LISTDMS ls;
-	khoiTaoDS(ls);
-	docFile(ls);
-	HienThiMenu(ls);
-}
+//
+//int main() {
+//	LISTDMS ls;
+//	khoiTaoDS(ls);
+//	docFile(ls);
+//	HienThiMenu(ls);
+//}
