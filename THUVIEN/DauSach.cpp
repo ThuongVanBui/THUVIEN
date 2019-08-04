@@ -49,42 +49,46 @@ int kiemTraMaISBN(LISTDS ls, char *maISBN) {
 
 void NhapThemDauSach(LISTDS &ls) {
 	int endchar;
-	char *isbn;
-	char *tenSach;
+	char *_isbn;
+	
 	char *tenTG;
 	int sotrang;
 	int namXB;
 	char *theloai;
-	
+	char *tenSach;
+
 		
 	while(true){
 		DAUSACH *ds= new DAUSACH;
 	NHAPISBN:
-		fflush(stdin);
 		printf("Ma ISBN:");
-		isbn = InputType(6,endchar,1);
+		scanf("%s", _isbn);
+	//	_isbn = InputType(6,endchar,1);
 		if (endchar == ESC) {
 			break;
 		}
-		if (strlen(isbn) == 0) {
+		if (strlen(_isbn) == 0) {
 			printf("Ma ISBN khong duoc rong!\n");
 			goto NHAPISBN;
 
 		}		
-		if (strlen(isbn) < 6) {
+		if (strlen(_isbn) < 6) {
 			printf("Ma ISBN it nhat phai co 6 ky tu!\n");
 			goto NHAPISBN;
 		}
-		if (kiemTraMaISBN(ls,isbn) == 1) {
+		if (kiemTraMaISBN(ls,_isbn) == 1) {
 			printf("Ma ISBN nay da co!\n");
 			goto NHAPISBN;
 		}
-		strcpy(ds->ISBN, isbn);
+		
+
+		strcpy(ds->ISBN, _isbn);
 	printf("%s",ds->ISBN);
 	NHAPTENSACH:
 		printf("\nNhap ten sach:");
 		fflush(stdin);
-		tenSach = InputType(200,endchar,1);
+		scanf("%s",tenSach);
+	//	tenSach = InputType(200,endchar,1);
 		if (strlen(tenSach) == 0) {
 			printf("Ten sach khong duoc rong!\n");
 			goto NHAPTENSACH;
@@ -93,6 +97,7 @@ void NhapThemDauSach(LISTDS &ls) {
 		printf("   %s",ds->ISBN);
 		strcpy(ds->TenSach, tenSach);
 		printf("    %s",ds->ISBN);
+		
 	NHAPSOTRANG:
 		printf("\nNhap so trang:");
 		sotrang = atoi(InputType(10,endchar,2));
@@ -165,6 +170,34 @@ void NhapThemDauSach(LISTDS &ls) {
 	
 }
 
+
+void nhapDauSach(LISTDS &ls) {
+	int endchar;
+	char *maISBN;
+	char *tenSach = "";
+	
+	while(true) {
+		DAUSACH *dSach = new DAUSACH;
+		printf("\nNhap ISBN:");
+//		fflush(stdin);
+		gets(maISBN);
+//		maISBN = InputType(6,endchar,1);
+		strcpy(dSach->ISBN, maISBN);
+
+		printf("\nNhap ten sach:");
+//		fflush(stdin);
+		gets(tenSach);
+
+//		tenSach = InputType(200,endchar,3);
+		strcpy(dSach->TenSach,tenSach);
+
+		printf("\n%s",dSach->ISBN);
+		printf("\n%s",dSach->TenSach);
+	
+	}
+	
+}
+
 void XuatDauSach(LISTDS ls) {
 	for (int i = 0; i <= ls.soluong; i++) {
 		printf("\nMa ISBN: %s\n",ls.nodeDS[i]->ISBN);
@@ -182,7 +215,8 @@ void XuatDauSach(LISTDS ls) {
 int main() {
 	LISTDS ls;
 	khoitaoDauSach(ls);
-	NhapThemDauSach(ls);
+//	NhapThemDauSach(ls);
+	nhapDauSach(ls);
 	
 	XuatDauSach(ls);
 	getch();

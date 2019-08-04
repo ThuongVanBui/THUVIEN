@@ -294,19 +294,20 @@ TenDG:
 		goto TenDG;
 	}
 GioiTinh:
-	printf("\nPhai (Nam - Nu): ");
-	phai =InputType(3,endchar,3);
-	if (strcmp(phai,"Nam") == 0) {
+	printf("\nPhai (0:Nam - 1:Nu): ");
+	phai =InputType(1,endchar,2);
+	if (strcmp(phai,"0") == 0) {
 		sex = 0;
-	} else if (strcmp(phai, "Nu") == 0) {
+	} else if (strcmp(phai, "1") == 0) {
 		sex = 1;
 	}
 	if(strlen(phai)==0){
 		printf("Phai khong duoc trong");
 		goto GioiTinh;
 	}
-	if(strcmp(phai,"Nam") == 0 || strcmp(phai,"Nu") == 0){
+	if(strcmp(phai,"0") == 0 || strcmp(phai,"1") == 0){
 		item.phai = sex;
+		
 	} else {
 		printf("Xin vui long nhap Nam hoac Nu");
 		goto GioiTinh;
@@ -338,6 +339,32 @@ NhapMT:
 	}
 }
 
+void xoaNodeCayNP(tree &ls) {
+	
+}
+
+char MENU_DSDG[3][30] 		= {"1.Sap xep theo ten    ","2.Sap xep theo stt     ","ESC: Thoat     " };
+
+void menuXemDanhSachDG(tree ls) {
+	int choice;
+	int endchar;
+	do {
+		for (int i = 0; i < 3;  i++) {
+			printf(MENU_DSDG[i]);
+		}
+		choice = atoi(InputType(1,endchar,2));
+		
+		switch (choice) {
+			case 1:
+				break;
+			case 2:
+				break;
+		}
+		
+	}while(endchar != ESC);
+	
+}
+
 void HienThiMenuDocGia(tree &ls) {
 	int choice;
 	int endchar;
@@ -358,7 +385,7 @@ void HienThiMenuDocGia(tree &ls) {
 				
 				break;
 	    case 2:	printf(MENU_DMS[1]); 
-	    
+	    		
 	          break;
 	    case 3:
 	    //	MenuXoaDMS(ls);
@@ -391,6 +418,7 @@ void HienThiMenuDocGia(tree &ls) {
   	clrscr(); 	
 	} while (endchar != ESC);
 }
+
 int main() {
 	tree ls;
 	KhoiTaoDocGia(ls);
