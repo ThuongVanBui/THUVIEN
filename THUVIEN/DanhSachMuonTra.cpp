@@ -1,6 +1,6 @@
 #include "mylib.h"
 
-char MENU_DMS[5][30] 		= {"1.Them    ","2.Xoa     ","3.Them item theo vi tri     ","4.Xem DS     ","5.Luu tep     " };
+char MENU_DMS[6][30] 		= {"1.Them    ","2.Xoa     ","3. Sua         ","4.Them item theo vi tri     ","5.Xem DS     ","6.Luu tep     " };
 
 enum TrangThaiMT {
 	DANGMUON = 0,
