@@ -207,7 +207,9 @@ void DuyetLNR(tree l, FILE *f) {
 
 void XuatDG(TheDocGia dg){
 	printf("\nMa the doc gia: %d",dg.MaThe);
+	uppercaseChar(dg.Ho);
 	printf("\nHo : %s",dg.Ho);
+	uppercaseChar(dg.Ten);
 	printf("\nTen : %s",dg.Ten);
 	switch(dg.phai){
 		case Nam:
@@ -406,6 +408,10 @@ NhapMT:
 	item.MaThe = maThe;
 	strcpy(item.Ho,ho);
 	strcpy(item.Ten,ten);
+	uppercaseChar(item.Ho);
+	uppercaseChar(item.Ten);
+
+	
 	item.lsMuonTra = listMTDG;
 	
 	ThemDG(l, item);
@@ -428,23 +434,25 @@ int countDG(tree ls)
 
 string Get_TenHO(TheDocGia dg)
 {
-	char token[100];
-	char hoten[100];
+	string token;
+	string hoten;
 	strcat(dg.Ho," ");
 	strcat(dg.Ho,dg.Ten);
 	
 	token = dg.Ho ;
 
-	hoten = toupper(token);
+	hoten = token;
 	return hoten;
 }
+
+
 
 void Create_ArrTenHo(tree ls, TEN_HO* arr)
 {
 	if (ls == NULL)
 		return;
 	Create_ArrTenHo(ls->tdgLeft, arr); // visit left subtree
-	arr[index].HoTen = toupper(Get_TenHO(ls->tdg).c_str());
+	arr[index].HoTen = toUpper(Get_TenHO(ls->tdg));
 ///	cout<<Get_TenHO(ls->tdg)<<endl;
 	arr[index++].MaThe = ls->tdg.MaThe;
 	Create_ArrTenHo(ls->tdgRight, arr);// visti right subtree

@@ -44,6 +44,19 @@ const int BACKSPACE = 8;
 //    }
 //    return 0;  
 //}
+string toUpper (string str){
+    locale loc; 
+    string n; 
+    for (string::size_type i=0; i<str.length(); ++i)
+        n += toupper(str[i], loc);
+    return n;
+}
+
+void uppercaseChar (char *str){
+    for(int i=0;i<strlen(str);i++){
+        str[i] = toupper(str[i]);
+    }
+}
 
 void ShowCur(bool CursorVisibility)
 {
