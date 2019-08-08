@@ -174,21 +174,21 @@ void NhapThemDauSach(LISTDS &ls) {
 void nhapDauSach(LISTDS &ls) {
 	int endchar;
 	char *maISBN;
-	char *tenSach = "";
+	char *tenSach;
 	
 	while(true) {
 		DAUSACH *dSach = new DAUSACH;
 		printf("\nNhap ISBN:");
 //		fflush(stdin);
-		gets(maISBN);
-//		maISBN = InputType(6,endchar,1);
+//		gets(maISBN);
+		maISBN = InputType(6,endchar,1);
 		strcpy(dSach->ISBN, maISBN);
 
 		printf("\nNhap ten sach:");
 //		fflush(stdin);
-		gets(tenSach);
+//		gets(tenSach);
 
-//		tenSach = InputType(200,endchar,3);
+		tenSach = InputType(200,endchar,3);
 		strcpy(dSach->TenSach,tenSach);
 
 		printf("\n%s",dSach->ISBN);

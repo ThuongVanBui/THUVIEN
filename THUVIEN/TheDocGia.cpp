@@ -436,10 +436,10 @@ string Get_TenHO(TheDocGia dg)
 {
 	string token;
 	string hoten;
-	strcat(dg.Ho," ");
-	strcat(dg.Ho,dg.Ten);
+	strcat(dg.Ten," ");
+	strcat(dg.Ten,dg.Ho);
 	
-	token = dg.Ho ;
+	token = dg.Ten ;
 
 	hoten = token;
 	return hoten;
@@ -471,9 +471,9 @@ void QuicKsort_ARRTenHo(TEN_HO *th, int left, int right)
 	TEN_HO key = th[(left + right) / 2];
 	int i = left, j = right;
 	do {
-		while (th[i].HoTen > key.HoTen)
+		while (th[i].HoTen < key.HoTen)
 			i++;
-		while (th[j].HoTen < key.HoTen)
+		while (th[j].HoTen > key.HoTen)
 			j--;
 		if (i <= j) {
 			Swap_TenHo(th[i], th[j]);
@@ -482,8 +482,11 @@ void QuicKsort_ARRTenHo(TEN_HO *th, int left, int right)
 		}
 	} while (i <= j);
 	if (left < j) QuicKsort_ARRTenHo(th, left, j);
-	if (right > i) QuicKsort_ARRTenHo(th, i, right);
+	if ( i < right) QuicKsort_ARRTenHo(th, i, right);
 }
+
+
+
 
 void DuyetLNR(tree ls) {
 	if (ls != NULL)
@@ -523,6 +526,7 @@ void menuXemDanhSachDG(tree ls) {
 				Create_ArrTenHo(ls, ArrTenHo);
 				QuicKsort_ARRTenHo(ArrTenHo, 0, nDG - 1);
 				for(int i = 0; i < nDG; i++) {
+					cout<<ArrTenHo[i].MaThe<< "        ";
 					cout<<ArrTenHo[i].HoTen<<endl;
 				}
 

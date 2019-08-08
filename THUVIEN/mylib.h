@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <iostream>
 #include "Marcro.h"
+#define EQUAL               0
 
 using namespace std;
 #define Enter 13
