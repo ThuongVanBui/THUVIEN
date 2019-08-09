@@ -137,7 +137,26 @@ void SetBGColor(WORD color)
 void clrscr() {
 	system("cls");
 }
+
+char *removeSpaces(char* s)
+{
+    char* cpy = s;  // an alias to iterate through s without moving s
+    char* temp = s;
+
+    while (*cpy)
+    {
+        if (*cpy != ' ')
+            *temp++ = *cpy;
+        cpy++;
+    }
+    *temp = 0;
+
+     return s;
+}
+
+
 char* InputType(int n,int &endchar,int type){
+	ShowCur(true);
 	n+=1;
 	int i =0;
 	char *s = new char[n];

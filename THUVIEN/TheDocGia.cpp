@@ -21,8 +21,8 @@ typedef struct TenHo TEN_HO;
 
 typedef struct TheDocGia {
 	int MaThe;
-	char Ho[100];
-	char Ten[100];
+	char Ho[50];
+	char Ten[70];
 	int phai;
 	int trangthaithe;
 	LISTMT lsMuonTra;
@@ -275,7 +275,7 @@ MaTheDG:
 
 HoDG:
 	printf("\Nhap ho: ");
-	ho=InputType(20,endchar,3);
+	ho=InputType(40,endchar,3);
 	if(strlen(ho)==0){
 		printf("Ho khong duoc trong");
 		goto HoDG;
