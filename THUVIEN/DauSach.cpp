@@ -1,7 +1,7 @@
 #include"DanhMucSach.cpp">
 #define MAXLIST 500
 
-char MENU_DAUSACH[5][30] 		= {"1.Them    ","2.Xoa     ","3.Sua     ","4.Xem DS     ","5.Luu tep     " };
+char MENU_DAUSACH[7][30] 		= {"1.Them    ","2.Xoa     ","3.Sua     ","4.Xem DS     ","5.Luu tep     ","6.Tim sach     ","7.Sap xep danh sach       " };
 
 
 enum ENUMTHELOAI {
@@ -169,12 +169,85 @@ void swap_DS(pDAUSACH ds1, pDAUSACH ds2)
 	*ds1 = *ds2;
 	*ds2 = temp;
 }
-//
-//
-//void sapXepDSTLTheoTen(LISTDS &ls) {
-//	
-//}
 
+
+
+void quickSortDAUSACH(LISTDS &ls, int left, int right) { 
+	int i, j;
+
+	  i = left;
+	  j = right;
+	  pDAUSACH pDS = ls.nodeDS[(left+right)/2];
+	
+	  do {
+	    while((strcmp(ls.nodeDS[i]->TenSach,pDS->TenSach) < 0) && (i < right)) {
+	       i++;
+	    }
+	    while((strcmp(ls.nodeDS[j]->TenSach,pDS->TenSach) > 0) && (j > left)) {
+	        j--;
+	    }
+	    if(i <= j) {
+			swap_DS(ls.nodeDS[i], ls.nodeDS[j]);
+	      	i++;
+	    	j--;
+	   }
+	  } while(i <= j);
+	
+	  if(left < j) {
+	     quickSortDAUSACH(ls, left, j);
+	  }
+	  if(i < right) {
+	     quickSortDAUSACH(ls, i, right);
+	  }
+}
+
+pDAUSACH timkiemDauSachTheoTen(LISTDS ls,char *tenSachCanTim) {
+	int first = 0;  
+    int last = ls.soluong;
+    int middle;
+
+    int cmpval;
+
+    while(first <= last) {
+        middle = (first + last) / 2;
+        cmpval = strcmp(tenSachCanTim, ls.nodeDS[middle]->TenSach);
+        if(cmpval == 0)
+            return ls.nodeDS[middle];
+        else if(cmpval < 0)
+            last = middle - 1;
+        else
+            first = middle + 1;
+    }
+    return NULL;
+}
+
+pDAUSACH timkiemDauSachTuanTuTheoTen(LISTDS ls,char *tenSachCanTim) {
+		int l = 0 ; 
+        int r = ls.soluong; 
+        while (l <= r)  
+        {   
+	        if (strcmp(tenSachCanTim,ls.nodeDS[l]->TenSach) == 0) {
+					return ls.nodeDS[l]; 
+	                
+	        }
+	        l++;
+		}
+  
+        return NULL; 
+}
+
+void XuatThongTinDauSach(pDAUSACH pDS) {
+	clrscr();
+	printf("\nMa ISBN: %s\n",pDS->ISBN);
+	printf("Ten sach: %s\n",pDS->TenSach);
+	printf("Tac gia: %s\n",pDS->TacGia);
+	printf("The loai: %s\n",stringtheloai(kieutheloai(pDS->TheLoai)));
+	printf("So Trang: %d\n",pDS->SoTrang);
+	printf("Nam xuat ban: %d\n",pDS->NamXuatBan);
+	printf("\n\n==> DANH MUC SACH <==\n\n");
+	XuatDMS(pDS->dms);
+	
+}
 
 void XuatDauSach(LISTDS ls) {
 	clrscr();
@@ -202,17 +275,12 @@ void XuatDauSachTheoTheLoai(LISTDS ls) {
 			printf("Nam xuat ban: %d\n",ls.nodeDS[i]->NamXuatBan);
 //			printf("\n\n==> DANH MUC SACH <==\n\n");
 //			XuatDMS(ls.nodeDS[i]->dms);
-		
 
-		
 	}
 }
 
 void NhapThemDauSach(LISTDS &ls) {
-	if (ls.soluong != -1) {
-		khoitaoDauSach(ls);
-	}
-	
+
 	//dau sach
 	DAUSACH *ds;
 	
@@ -366,6 +434,7 @@ void NhapThemDauSach(LISTDS &ls) {
 		
 }
 
+
 //void XuatDauSach(LISTDS ls) {
 //	
 //	for (int i = 0; i <= ls.soluong; i++) {
@@ -402,19 +471,57 @@ void NhapThemDauSach(LISTDS &ls) {
 
 void luuFileDAUSACH(LISTDS ls) {
 	clrscr();
+}
+
+void docFileDAUSACH(LISTDS &ls) {
+	DanhMucSach dms;
+	pDAUSACH pds;
+
 	int i = 0;
 	FILE *f;
-	 if ((f = fopen("DAUSACH.bin","wb+") )== NULL){
+	 if ((f = fopen("DAUSACH.bin","rb") )== NULL){
        printf("Error! opening file");
        exit(1);
    }
- 
-	for(int i = 0; i <= ls.soluong; i++) {
-		fwrite(&ls.nodeDS[i],sizeof(DauSach),1,f);
-	}
-	getch();
+ //  khoitaoDauSach(ls);
+   
+ 	while(fread(pds,sizeof(pds),1,f)){
+ 		if(strcmp(pds->ISBN,"@@")==0){
+		 break;
+		 }
+		khoiTaoDMS(pds->dms);
+ 		while(fread(&dms, sizeof(DanhMucSach), 1, f)) {
+			//NodeMT_PTR nodeMT = newNodeMT(mt);
+			if(strcmp(dms.MaSach,"@@")==0){
+				break;
+			}
+			themCuoi(pds->dms,dms);
+		}
+		ls.soluong++;
+		
+		ls.nodeDS[ls.soluong] = pds;
+	 }
+	
 	fclose(f);
 	return; 
+}
+
+void luuFileDAUSACH(LISTDS lsDS, FILE *f) {
+	int i = 0;
+	while(i <= lsDS.soluong){
+		fwrite(&lsDS.nodeDS[i],sizeof(DAUSACH), 1, f);
+		LISTDMS lsdms = lsDS.nodeDS[i]->dms;
+		for(NodeDMS_PTR p = lsdms.dmsFirst; p != NULL; p = p->dmsNext) {
+			fwrite(&p->dms,sizeof(DanhMucSach),1,f);
+		}
+	
+		DanhMucSach temp ;
+		strcpy(temp.MaSach,"@@");
+		fwrite(&temp,sizeof(DanhMucSach),1,f);
+		i++;
+	}
+	
+
 }
 
 
@@ -422,10 +529,13 @@ void HienThiMenuDauSach(LISTDS &ls) {
 	int choice;
 	int endchar;
 	char *s;
+	char *tenSachCanTim;
 	int _theloai;
-	
+	LISTDS lsTL;
+	pDAUSACH sachTimDuoc;
+
 	do {
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 7; i++) {
 			printf(MENU_DAUSACH[i]);
 		}
 	
@@ -435,7 +545,7 @@ void HienThiMenuDauSach(LISTDS &ls) {
 	    case 1: 
 	    		clrscr();
 	    		NhapThemDauSach(ls);
-				
+
 				break;
 	    case 2:	
 	    		
@@ -449,8 +559,9 @@ void HienThiMenuDauSach(LISTDS &ls) {
 	    	printf("Nhap the loai:");
 	    	_theloai = atoi(InputType(1,endchar,2));
 	    	printf("\n\n%s",stringtheloai(kieutheloai(_theloai)));
-
-	    	XuatDauSachTheoTheLoai(taoDStheoTL(ls,_theloai));
+			lsTL = taoDStheoTL(ls,_theloai);
+			quickSortDAUSACH(lsTL,0,lsTL.soluong);
+	    	XuatDauSachTheoTheLoai(lsTL);
 	    	getch();
 	    	break;
 	    case 5:
@@ -459,13 +570,36 @@ void HienThiMenuDauSach(LISTDS &ls) {
 		       printf("Error! opening file");
 		       exit(1);
 		   }
-	   		luuFileDAUSACH(ls);
+	   		luuFileDAUSACH(ls,f);
 	   		fclose(f);
 
 	   		printf("Da luu");
 	   		getch();
 	         break;
+		case 6:
+			printf("Nhap ten sach:");
+			tenSachCanTim = InputType(200,endchar,1);
+			uppercaseChar(tenSachCanTim);
+			sachTimDuoc = timkiemDauSachTheoTen(ls,tenSachCanTim);
 
+		//	sachTimDuoc = timkiemDauSachTuanTuTheoTen(ls,tenSachCanTim);
+			if (sachTimDuoc != NULL) {
+				XuatThongTinDauSach(sachTimDuoc);
+
+			}else {
+				printf("Khong co sach: %s",tenSachCanTim);
+			}
+			getch();
+			break;
+		case 7:
+			printf("Dang sap xep....");
+			if (ls.soluong != -1){
+				quickSortDAUSACH(ls,0,ls.soluong);
+				XuatDauSachTheoTheLoai(ls);
+			}
+
+			getch();
+			break;
 	     default: printf("Wrong Choice. Enter again\n");
 	     getch();
 	         
@@ -480,6 +614,8 @@ void HienThiMenuDauSach(LISTDS &ls) {
 int main() {
 	LISTDS ls;
 	khoitaoDauSach(ls);
+//	docFileDAUSACH(ls);
+//	XuatDauSach(ls);
 	HienThiMenuDauSach(ls);
 	//NhapThemDauSach(ls);
 //	nhapDauSach(ls);

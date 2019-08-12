@@ -1,8 +1,8 @@
 #include "DanhSachMuonTra.cpp"
 
 enum TrangThaiThe {
-	DuocPhep = 0,
-	KhongDuocPhep = 1
+	KhongDuocPhep = 0,
+	DuocPhep = 1
 };
 
 enum Phai {
@@ -466,6 +466,13 @@ void Swap_TenHo(TEN_HO &a, TEN_HO &b)
 	b = temp;
 }
 
+void Swap_NodeTree(TEN_HO &a, TEN_HO &b)
+{
+	TEN_HO temp;
+	temp = a;
+	a = b;
+	b = temp;
+}
 void QuicKsort_ARRTenHo(TEN_HO *th, int left, int right)
 {
 	TEN_HO key = th[(left + right) / 2];
@@ -547,8 +554,8 @@ void HienThiMenuDocGia(tree &ls) {
 	char *s;
 	int maTDG;	
 	do {
-		for (int i = 0; i < 6; i++) {
-			printf(MENU_DMS[i]);
+		for (int i = 0; i < 7; i++) {
+			printf(MENU_DOCGIA[i]);
 		}
 //		gotoxy(20,20);
 //		printf("ESC: Thoat");
@@ -561,7 +568,7 @@ void HienThiMenuDocGia(tree &ls) {
 	    		NhapDSDocGia(ls);
 				
 				break;
-	    case 2:	printf(MENU_DMS[1]); 
+	    case 2:	printf(MENU_DOCGIA[1]); 
 	    		
 	          break;
 	    case 3:
@@ -591,6 +598,12 @@ void HienThiMenuDocGia(tree &ls) {
 
 	   		printf("Da luu");
 	   		getch();
+	    	break;
+	    case 7:
+	    	printf("Nhap ma the doc gia:");
+	    	maTDG = atoi(InputType(6,endchar,2));
+	    	XuatDG(timDG(ls,maTDG)->tdg);
+	    	getch(); 
 	    	break;
 	     default: printf("Wrong Choice. Enter again\n");
 	     getch();
