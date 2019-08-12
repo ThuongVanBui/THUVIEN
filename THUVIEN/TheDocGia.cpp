@@ -10,15 +10,25 @@ enum Phai {
 	Nu = 1
 };
 
+int index = 0;
+
+struct TenHo
+{
+	string HoTen;
+	int MaThe;
+};
+typedef struct TenHo TEN_HO;
+
 typedef struct TheDocGia {
 	int MaThe;
-	char Ho[20];
-	char Ten[50];
+	char Ho[50];
+	char Ten[70];
 	int phai;
 	int trangthaithe;
 	LISTMT lsMuonTra;
 	
 };
+
 
 
 //Danh Sach THE DOC GIA - CAY NHI PHAN
@@ -57,12 +67,74 @@ int checkMADG(tree l,int maDG) {
 }
 
 
+
 Node_DocGiaPTR newNodeDG(TheDocGia dg){
 	Node_DocGiaPTR p= new Node_THEDOCGIA;
 	p->tdg=dg;
 	p->tdgRight=NULL;
 	p->tdgLeft=NULL;
 }
+
+
+
+Node_THEDOCGIA* timDG(tree ls, int maTDG)
+{
+    if (ls == NULL)
+        return NULL;
+ 
+	if (ls->tdg.MaThe == maTDG)
+	{
+		return ls;
+	}
+	if (ls->tdg.MaThe > maTDG)
+	{
+		timDG(ls->tdgLeft, maTDG);
+	}
+	else
+	{
+		timDG(ls->tdgRight, maTDG);
+	}
+}
+
+TheDocGia LeftMostValue( tree root )
+{
+    while ( root->tdgLeft != NULL )
+        root = root->tdgLeft;
+    return root->tdg;
+}
+
+
+Node_THEDOCGIA* XoaDG( tree &root, int maTDG )
+{
+    if ( root == NULL )
+        return root;
+    if ( maTDG < root->tdg.MaThe )
+        root->tdgLeft = XoaDG( root->tdgLeft, maTDG );
+    else if ( maTDG > root->tdg.MaThe )
+        root->tdgRight = XoaDG( root->tdgRight, maTDG );
+    else
+    {
+        // root->data == value, delete this node
+        if ( root->tdgLeft == NULL )
+        {
+            Node_THEDOCGIA* newRoot = root->tdgRight;
+            free( root );
+            return newRoot;
+        }
+        if ( root->tdgRight == NULL )
+        {
+            Node_THEDOCGIA* newRoot = root->tdgLeft;
+            free( root );
+            return newRoot;
+        }
+        root->tdg = LeftMostValue( root->tdgRight );
+        root->tdgRight = XoaDG( root->tdgRight, root->tdg.MaThe );
+    }
+    return root;
+}
+
+
+
 
 void ThemDG(tree &l,TheDocGia dg){
 	Node_DocGiaPTR p=newNodeDG(dg);
@@ -135,7 +207,9 @@ void DuyetLNR(tree l, FILE *f) {
 
 void XuatDG(TheDocGia dg){
 	printf("\nMa the doc gia: %d",dg.MaThe);
+	uppercaseChar(dg.Ho);
 	printf("\nHo : %s",dg.Ho);
+	uppercaseChar(dg.Ten);
 	printf("\nTen : %s",dg.Ten);
 	switch(dg.phai){
 		case Nam:
@@ -159,6 +233,8 @@ void XuatDG(TheDocGia dg){
 	XuatDSMT(dg.lsMuonTra);
 	
 }
+
+
 void XuatDSDG(tree l){
 	const int STACKSIZE =500;
 	Node_DocGiaPTR Stack[STACKSIZE];
@@ -199,7 +275,7 @@ MaTheDG:
 
 HoDG:
 	printf("\Nhap ho: ");
-	ho=InputType(20,endchar,3);
+	ho=InputType(40,endchar,3);
 	if(strlen(ho)==0){
 		printf("Ho khong duoc trong");
 		goto HoDG;
@@ -230,7 +306,7 @@ GioiTinh:
 		goto GioiTinh;
 	}
 TrangThaiThe:
-	printf("\nNhap trang thai the (0: the bi khoa -1: the dang hoat dong) : ");
+	printf("\nNhap trang thai the (0: the bi khoa, 1: the dang hoat dong): ");
 	trangThai = InputType(2,endchar,2); 
 	int status = atoi(trangThai);
 	if((strlen(trangThai))==0){
@@ -294,19 +370,20 @@ TenDG:
 		goto TenDG;
 	}
 GioiTinh:
-	printf("\nPhai (Nam - Nu): ");
-	phai =InputType(3,endchar,3);
-	if (strcmp(phai,"Nam") == 0) {
+	printf("\nPhai (0:Nam - 1:Nu): ");
+	phai =InputType(1,endchar,2);
+	if (strcmp(phai,"0") == 0) {
 		sex = 0;
-	} else if (strcmp(phai, "Nu") == 0) {
+	} else if (strcmp(phai, "1") == 0) {
 		sex = 1;
 	}
 	if(strlen(phai)==0){
 		printf("Phai khong duoc trong");
 		goto GioiTinh;
 	}
-	if(strcmp(phai,"Nam") == 0 || strcmp(phai,"Nu") == 0){
+	if(strcmp(phai,"0") == 0 || strcmp(phai,"1") == 0){
 		item.phai = sex;
+		
 	} else {
 		printf("Xin vui long nhap Nam hoac Nu");
 		goto GioiTinh;
@@ -331,6 +408,10 @@ NhapMT:
 	item.MaThe = maThe;
 	strcpy(item.Ho,ho);
 	strcpy(item.Ten,ten);
+	uppercaseChar(item.Ho);
+	uppercaseChar(item.Ten);
+
+	
 	item.lsMuonTra = listMTDG;
 	
 	ThemDG(l, item);
@@ -338,12 +419,135 @@ NhapMT:
 	}
 }
 
+int countDG(tree ls)
+{
+	int c = 1;             // ban than node duoc dem la 1;
+	if (ls == NULL)
+		return 0;
+	else
+	{
+		c += countDG(ls->tdgLeft);
+		c += countDG(ls->tdgRight);
+		return c;
+	}
+}
+
+string Get_TenHO(TheDocGia dg)
+{
+	string token;
+	string hoten;
+	strcat(dg.Ten," ");
+	strcat(dg.Ten,dg.Ho);
+	
+	token = dg.Ten ;
+
+	hoten = token;
+	return hoten;
+}
+
+
+
+void Create_ArrTenHo(tree ls, TEN_HO* arr)
+{
+	if (ls == NULL)
+		return;
+	Create_ArrTenHo(ls->tdgLeft, arr); // visit left subtree
+	arr[index].HoTen = toUpper(Get_TenHO(ls->tdg));
+///	cout<<Get_TenHO(ls->tdg)<<endl;
+	arr[index++].MaThe = ls->tdg.MaThe;
+	Create_ArrTenHo(ls->tdgRight, arr);// visti right subtree
+}
+
+void Swap_TenHo(TEN_HO &a, TEN_HO &b)
+{
+	TEN_HO temp;
+	temp = a;
+	a = b;
+	b = temp;
+}
+
+void QuicKsort_ARRTenHo(TEN_HO *th, int left, int right)
+{
+	TEN_HO key = th[(left + right) / 2];
+	int i = left, j = right;
+	do {
+		while (th[i].HoTen < key.HoTen)
+			i++;
+		while (th[j].HoTen > key.HoTen)
+			j--;
+		if (i <= j) {
+			Swap_TenHo(th[i], th[j]);
+			i++;
+			j--;
+		}
+	} while (i <= j);
+	if (left < j) QuicKsort_ARRTenHo(th, left, j);
+	if ( i < right) QuicKsort_ARRTenHo(th, i, right);
+}
+
+
+
+
+void DuyetLNR(tree ls) {
+	if (ls != NULL)
+	{
+		DuyetLNR(ls->tdgLeft);
+		XuatDG(ls->tdg);
+		DuyetLNR(ls->tdgRight);
+	}
+
+	
+}
+
+//void xuatTENHO(tree ls,TEN_HO *arr) {
+//	
+//	for(int i = 0; i < countDG(ls); i++) {
+//		printf("%s",arr[i].HoTen);
+//	}
+//
+//}
+
+char MENU_DSDG[3][30] 		= {"1.Sap xep theo ten    ","2.Sap xep theo stt     ","ESC: Thoat     " };
+
+void menuXemDanhSachDG(tree ls) {
+	int choice;
+	int endchar;
+	do {
+		for (int i = 0; i < 3;  i++) {
+			printf(MENU_DSDG[i]);
+		}
+		choice = atoi(InputType(1,endchar,2));
+		
+		switch (choice) {
+			case 1: {
+				index =  0;
+				int nDG = countDG(ls);
+				TEN_HO* ArrTenHo = new TEN_HO[nDG];
+				Create_ArrTenHo(ls, ArrTenHo);
+				QuicKsort_ARRTenHo(ArrTenHo, 0, nDG - 1);
+				for(int i = 0; i < nDG; i++) {
+					cout<<ArrTenHo[i].MaThe<< "        ";
+					cout<<ArrTenHo[i].HoTen<<endl;
+				}
+
+				break;
+				}
+			case 2:
+				DuyetLNR(ls);
+				break;
+		}
+		
+	}while(endchar != ESC);
+	
+}
+
 void HienThiMenuDocGia(tree &ls) {
 	int choice;
 	int endchar;
-	char *s;	
+	char *s;
+	int maTDG;	
 	do {
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 6; i++) {
 			printf(MENU_DMS[i]);
 		}
 //		gotoxy(20,20);
@@ -358,21 +562,25 @@ void HienThiMenuDocGia(tree &ls) {
 				
 				break;
 	    case 2:	printf(MENU_DMS[1]); 
-	    
+	    		
 	          break;
 	    case 3:
 	    //	MenuXoaDMS(ls);
 	    	printf("\n");
-	    	printf("\n");
-	    	
+	    	printf("\nNhap ma so the DG:");
+	    	maTDG = atoi(InputType(6,endchar,2));
+	    	XuatDG(timDG(ls,maTDG)->tdg);
 	    	getch(); 
 	        break;
 	    case 4:
+	    	break;
+	    case 5:
 			printf("\n");
-			XuatDSDG(ls);
+//			XuatDSDG(ls);
+			menuXemDanhSachDG(ls);
 			getch();
 	         break;
-	    case 5:
+	    case 6:
     		FILE *f;
 			if ((f = fopen("DanhSachDocGia.bin","wb+") )== NULL){
 		       printf("Error! opening file");
@@ -391,6 +599,7 @@ void HienThiMenuDocGia(tree &ls) {
   	clrscr(); 	
 	} while (endchar != ESC);
 }
+
 int main() {
 	tree ls;
 	KhoiTaoDocGia(ls);

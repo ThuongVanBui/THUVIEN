@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <iostream>
 #include "Marcro.h"
+#define EQUAL               0
 
 using namespace std;
 #define Enter 13
@@ -44,6 +45,19 @@ const int BACKSPACE = 8;
 //    }
 //    return 0;  
 //}
+string toUpper (string str){
+    locale loc; 
+    string n; 
+    for (string::size_type i=0; i<str.length(); ++i)
+        n += toupper(str[i], loc);
+    return n;
+}
+
+void uppercaseChar (char *str){
+    for(int i=0;i<strlen(str);i++){
+        str[i] = toupper(str[i]);
+    }
+}
 
 void ShowCur(bool CursorVisibility)
 {
@@ -123,7 +137,26 @@ void SetBGColor(WORD color)
 void clrscr() {
 	system("cls");
 }
+
+char *removeSpaces(char* s)
+{
+    char* cpy = s;  // an alias to iterate through s without moving s
+    char* temp = s;
+
+    while (*cpy)
+    {
+        if (*cpy != ' ')
+            *temp++ = *cpy;
+        cpy++;
+    }
+    *temp = 0;
+
+     return s;
+}
+
+
 char* InputType(int n,int &endchar,int type){
+	ShowCur(true);
 	n+=1;
 	int i =0;
 	char *s = new char[n];
@@ -262,7 +295,7 @@ int KhoangCachNgay(NGAY_THANG nt1)
 {
 	NGAY_THANG nt2;
 	LayNgayGioHT(nt2);
-	return (tinhNgay(nt2) - tinhNgay(nt1));
+	return ( tinhNgay(nt1) - tinhNgay(nt2));
 }
 
 int SoSanhNgay(NGAY_THANG nt1, NGAY_THANG nt2)
@@ -381,7 +414,7 @@ int NhapNgayThang(NGAY_THANG &nt, int x, int y)
 				kb_hit = _getch();
 				if (kb_hit == KEY_F10)
 				{
-
+				//	xuatNgayThang(temp,x+1,y);
 					flag = ngayHopLe(temp);
 					if (flag == 3)
 					{
@@ -398,11 +431,17 @@ int NhapNgayThang(NGAY_THANG &nt, int x, int y)
 						// kiem tra truong hop dac biet
 						if (KhoangCachNgay(temp) < 0)
 						{
+						//	printf("khoang cach: %d", KhoangCachNgay(temp));
+						//	xuatNgayThang(temp,x+50,y+1);
+ 
 							return 1;
 						}
 						else
 						{
 							// chuyen du lieu ngay thang tam vao ngay thang chinh
+//							printf("dung");
+//							printf("khoang cach: %d", KhoangCachNgay(temp));
+//							xuatNgayThang(temp,x+50,y+1);
 							nt = temp;
 							return 2;
 						}		

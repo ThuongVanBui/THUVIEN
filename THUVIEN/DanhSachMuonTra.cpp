@@ -1,6 +1,6 @@
 #include "mylib.h"
 
-char MENU_DMS[5][30] 		= {"1.Them    ","2.Xoa     ","3.Them item theo vi tri     ","4.Xem DS     ","5.Luu tep     " };
+char MENU_DMS[6][30] 		= {"1.Them    ","2.Xoa     ","3. Sua         ","4.Them item theo vi tri     ","5.Xem DS     ","6.Luu tep     " };
 
 enum TrangThaiMT {
 	DANGMUON = 0,
@@ -10,8 +10,8 @@ enum TrangThaiMT {
 
 typedef struct DanhSachMuonTra {
 	char MaSach[20];
-	char NgayMuon[20];
-	char NgayTra[20];
+	NGAY_THANG NgayMuon;
+	NGAY_THANG NgayTra;
 	int trangthaiMT;
 
 };
@@ -205,85 +205,16 @@ void xoaDauMT(LISTMT &ls) {
 }
 
 
-DanhSachMuonTra _NhapDuLieuSach(LISTMT &ls){
-	int endchar;
-	char *maSach;
-	char *trangThai;
-	char *NgayMuon;
-	
-	DanhSachMuonTra item;
-		clrscr();	
-	NHAPMA:
-		printf("\nNhap ma sach:");
-		maSach =InputType(20,endchar,1);
-		if(strlen(maSach)==0){
-			printf("Ma sach khong duoc rong");
-			goto NHAPMA;
-		}
-		if (checkMaDMS(ls, maSach) == 1) {
-			printf("Ma sach trung");
-			goto NHAPMA;
-		}
-		
-		if (strcmp(maSach,"0") == 0) {
-			//break;
-		}
-		strcpy(item.MaSach,maSach);
-	NHAPNGAYMUON:
-		printf("\nNhap ngay muon (dd/MM/yyyy):");
-		NgayMuon = InputType(11,endchar,1);
-		if(strlen(NgayMuon)==0){
-			printf("Ngay muon khong duoc rong");
-			goto NHAPNGAYMUON;
-		}
-		strcpy(item.NgayMuon,NgayMuon);
-	NHAPNGAYTRA:
-		printf("\nNhap ngay muon (dd/MM/yyyy):");
-		NgayMuon = InputType(11,endchar,1);
-		if(strlen(NgayMuon)==0){
-			printf("Ngay tra khong duoc rong");
-			goto NHAPNGAYTRA;
-		}
-		strcpy(item.NgayTra,NgayMuon);		
-	NHAPTT:
-		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");		
-		trangThai= InputType(1,endchar,2);
-		int _trangThai = atoi(trangThai);	
-		
-		if(strlen(trangThai)==0){
-			printf("Trang Thai khong duoc rong");
-			goto NHAPTT;
-		}
-		if(_trangThai<0 || _trangThai>2)
-		{
-			printf("Xin nhap 0 hoac 1 hoac 2");
-			goto NHAPTT;
-		}
-		item.trangthaiMT = _trangThai;
-		
-	return item;
-}
-void _NhapSachTheoViTri(LISTMT &l){
-	int endchar;
-	printf("\nNhap du lieu sach: \n");
-	DanhSachMuonTra item= _NhapDuLieuSach(l);
-	printf("\nXin nhap vi tri can them: ");
-	char *pos = InputType(3,endchar,2);
-	printf("%s",pos);
-	printf("\n");
-	_themBatKiRight(l,item,atoi(pos));
-	getch();
-}
+
+
 void NhapMT(LISTMT &ls) {
 	int c;
 	int vitri;
 	int endchar;
 	char *maSach;
 	char *trangThai;
-	char *NgayMuon;
-	char *NgayTra;
-	NGAY_THANG ntn;
-	NGAY_THANG ntnTRA;
+	NGAY_THANG ngaymuon;
+	NGAY_THANG ngaytra;
 	while(true) {
 		DanhSachMuonTra item;
 	NHAPMA:
@@ -303,36 +234,19 @@ void NhapMT(LISTMT &ls) {
 		}
 		strcpy(item.MaSach,maSach);
 	NHAPNGAYMUON:
-		LayNgayGioHT(ntn);
-		sprintf(NgayMuon, "%d /%d /%d", ntn.ngay,ntn.thang,ntn.nam);
-		printf("\nNhap ngay muon (dd/MM/yyyy):%s", NgayMuon);
-		if(strlen(NgayMuon)==0){
-			printf("Ngay muon khong duoc rong");
-			goto NHAPNGAYMUON;
-		}
-		strcpy(item.NgayMuon,NgayMuon);
+		LayNgayGioHT(ngaymuon);
+		printf("\nNhap ngay muon (dd/MM/yyyy):%d /%d /%d", ngaymuon.ngay,ngaymuon.thang,ngaymuon.nam);
+		item.NgayMuon = ngaymuon;
+
 	NHAPNGAYTRA:
 		printf("\nNhap ngay tra (dd/MM/yyyy):");
-	//	NgayMuon = InputType(11,endchar,1);
-		int check1 = NhapNgayThang(ntnTRA,wherex(),wherey());
-		printf("%d", check1);
-		if (SoSanhNgay(ntn, ntnTRA) < 0) {
-			gotoxy(0, wherey());
-			printf("                                                                             ");
-		}
-		gotoxy(0, wherey());
-		goto NHAPNGAYTRA;
-//		if (check1 == 2) {
-//			if (SoSanhNgay(ntn,ntnTRA) < 0){
-//				check1 = 1;
-//			}
-//		}
-//		NgayMuon = ;
-		if(strlen(NgayMuon)==0){
-			printf("Ngay tra khong duoc rong");
+		int check1 = NhapNgayThang(ngaytra,wherex(),wherey());
+		if (SoSanhNgay(ngaymuon, ngaytra) < 0) {
 			goto NHAPNGAYTRA;
+
 		}
-		strcpy(item.NgayTra,NgayMuon);		
+		item.NgayTra = ngaytra;
+		
 	NHAPTT:
 		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");		
 		trangThai= InputType(1,endchar,2);
@@ -370,8 +284,8 @@ void XuatDSMT(LISTMT ls) {
 				break;
 
 		}
-		printf("\nNgay muon: %s", p->DSMT.NgayMuon);
-		printf("\nNgay tra: %s", p->DSMT.NgayTra);
+		printf("\nNgay muon: %d /%d /%d", p->DSMT.NgayMuon.ngay,p->DSMT.NgayMuon.thang,p->DSMT.NgayMuon.nam);
+		printf("\nNgay tra: %d /%d /%d", p->DSMT.NgayTra.ngay,p->DSMT.NgayTra.thang,p->DSMT.NgayTra.nam);
 		printf("\n");
 	}
 }
@@ -472,7 +386,7 @@ void HienThiMenu(LISTMT &ls) {
 	    case 3:
 	    //	MenuXoaDMS(ls);
 	    	printf("\n");
-	    	_NhapSachTheoViTri(ls);
+//	    	_NhapSachTheoViTri(ls);
 	    	printf("\n");
 	    	XuatDSMT(ls);
 	    	getch(); 
@@ -493,9 +407,9 @@ void HienThiMenu(LISTMT &ls) {
 	} while (endchar != ESC);
 }
 
-int main() {
-	LISTMT ls;
-	khoiTao(ls);
-	docFile(ls);
-	HienThiMenu(ls);
-}
+//int main() {
+//	LISTMT ls;
+//	khoiTao(ls);
+//	docFile(ls);
+//	HienThiMenu(ls);
+//}

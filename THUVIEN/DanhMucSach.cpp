@@ -10,9 +10,9 @@ enum TrangThaiDMS {
 };
 
 typedef struct DanhMucSach {
-	char MaSach[20];
+	char MaSach[21];
 	int trangthaiDMS;
-	char ViTri[50];
+	char ViTri[201];
 	
 };
 
@@ -31,7 +31,7 @@ struct ListDMS{
 typedef struct ListDMS LISTDMS;
 
 
-void khoiTaoDS(LISTDMS &lsDMS){
+void khoiTaoDMS(LISTDMS &lsDMS){
 	lsDMS.dmsFirst = lsDMS.dmsLast = NULL;
 }
 
@@ -155,13 +155,13 @@ void NhapDMSach(LISTDMS &ls, char *maISBN) {
 	char *viTri;
 	while(true) {
 		DanhMucSach item;
-	//	clrscr();	
 	NHAPMA:
 		printf("\nNhap ma sach:");
 		stt += 1;
 		char buffer[20];
 		maSach = maISBN ;
 		strcat(maSach,itoa(stt,buffer,10));
+
 		if(strlen(maSach)==0){
 			printf("Ma sach khong duoc rong");
 			goto NHAPMA;
@@ -207,12 +207,43 @@ void NhapDMSach(LISTDMS &ls, char *maISBN) {
 }
 
 
+void NhapVitriSLDMS(LISTDMS &ls, char ISBN[8], char *Vitri, int trangThai, int soLuong) {
+	int i = 0;
+	char MaDMS[21];
+	char ma[21];
+	while(i < soLuong) {
+		//Ma danh muc sach
+		strcpy(ma,ISBN);
+		DanhMucSach item;
+		itoa(i,MaDMS,10);
+		strcat(ma,MaDMS);
+		uppercaseChar(ma);
+		strcpy(item.MaSach,ma);
+
+		//vi tri sach
+		strcpy(item.ViTri,Vitri);
+		
+		//vi tri
+		item.trangthaiDMS = 0;
+		
+		themCuoi(ls,item);
+		i++;
+	}
+	
+	
+	printf("\nSo luong nhap: %d", soLuong);
+	printf("\nVi tri: %s", Vitri);
+	printf("\nTrang thai: DUOC MUON.");
+	
+}
+
+
 void XuatDMS(LISTDMS ls) {
 	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
 		printf("\nMa sach: %s", p->dms.MaSach);
 		switch (p->dms.trangthaiDMS) {
 			case DUOCMUON:
-				printf("\nTrang thai: Duoc muon");
+				printf("\nTrang thai: DUOC MUON.");
 				break;
 			case DADUOCMUON:
 				printf("\nTrang thai: Da muon");
