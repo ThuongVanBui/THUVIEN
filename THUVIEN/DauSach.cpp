@@ -1,4 +1,4 @@
-#include"DanhMucSach.cpp">
+#include"DanhMucSach.cpp"
 #define MAXLIST 5
 struct DauSach {
 	char ISBN[6];
@@ -64,8 +64,11 @@ void NhapThemDauSach(LISTDS &ls) {
 	
 		
 	while(true){
+
 		DAUSACH *ds =new DAUSACH;
+
 	NHAPISBN:
+		fflush(stdin);
 		printf("Ma ISBN:");
 		isbn = InputType(6,endchar,1);
 		if (endchar == ESC) {
@@ -84,17 +87,18 @@ void NhapThemDauSach(LISTDS &ls) {
 			printf("Ma ISBN nay da co!\n");
 			goto NHAPISBN;
 		}
-		strcpy(ds->ISBN, isbn);
-	
+		
+
 	NHAPTENSACH:
 		printf("\nNhap ten sach:");
+		fflush(stdin);
 		tenSach = InputType(200,endchar,1);
 		if (strlen(tenSach) == 0) {
 			printf("Ten sach khong duoc rong!\n");
 			goto NHAPTENSACH;
 
 		}
-		strcpy(ds->TenSach, tenSach);
+	
 	NHAPSOTRANG:
 		printf("\nNhap so trang:");
 		sotrang = atoi(InputType(10,endchar,2));
@@ -115,7 +119,7 @@ void NhapThemDauSach(LISTDS &ls) {
 
 		}
 		
-		strcpy(ds->TacGia, tenTG);	
+		
 		
 	NHAPNAMXUATBAN:
 		printf("\nNhap nam xuat ban:");
@@ -131,7 +135,7 @@ void NhapThemDauSach(LISTDS &ls) {
 			goto NHAPNAMXUATBAN;		
 		}
 		
-		ds->NamXuatBan = namXB;		
+		
 	
 	NHAPTHELOAI:
 		printf("\nNhap the loai:");
@@ -142,32 +146,41 @@ void NhapThemDauSach(LISTDS &ls) {
 
 		}
 		
-		strcpy(ds->TheLoai, theloai);
+	
 		
 		if (endchar == ESC) {
 			break;
 		}
+
+		strcpy(ds->TenSach, tenSach);
+		strcpy(ds->ISBN, isbn);
+		strcpy(ds->TacGia, tenTG);	
+		strcpy(ds->TheLoai, theloai);
+			ds->NamXuatBan = namXB;	
 	
 	//Danh muc sach
 		printf("\n\n==> NHAP DANH MUC SACH <==\n\n");
 		khoiTaoDS(ds->dms);
-		NhapDMSach(ds->dms);
+		
+		NhapDMSach(ds->dms,ds->ISBN);
+		XuatDMS(ds->dms);
+		getch();
 		if (dauSachDay(ls) == 1) {
 			printf("Danh sach da day!");
 			break;
 		}
-		printf("=====");
+		
 		ls.soluong++;
-		printf("%d",ls.soluong);
-
-		ls.nodeDS[0] = ds;
+		ls.nodeDS[ls.soluong] = ds;
+	
 	}
 	
 }
 
 void XuatDauSach(LISTDS ls) {
-	for (int i = 0; i < ls.soluong; i++) {
-		printf("Ma ISBN: %s\n",ls.nodeDS[i]->ISBN);
+	
+	for (int i = 0; i <= ls.soluong; i++) {
+		printf("\nMa ISBN: %s\n",ls.nodeDS[i]->ISBN);
 		printf("Ten sach: %s\n",ls.nodeDS[i]->TenSach);
 		printf("Tac gia: %s\n",ls.nodeDS[i]->TacGia);
 		printf("The loai: %s\n",ls.nodeDS[i]->TheLoai);
@@ -185,5 +198,6 @@ int main() {
 	NhapThemDauSach(ls);
 	
 	XuatDauSach(ls);
+	getch();
 }
 

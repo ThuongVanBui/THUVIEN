@@ -145,10 +145,11 @@ void xoaHet(LISTDMS &ls) {
 
 }
 
-void NhapDMSach(LISTDMS &ls) {
+void NhapDMSach(LISTDMS &ls, char *maISBN) {
 	int c;
 	int vitri;
 	int endchar;
+	int stt = 0;
 	char *maSach;
 	char *trangThai;
 	char *viTri;
@@ -157,25 +158,31 @@ void NhapDMSach(LISTDMS &ls) {
 	//	clrscr();	
 	NHAPMA:
 		printf("\nNhap ma sach:");
-		maSach =InputType(20,endchar,1);
+		stt += 1;
+		char buffer[20];
+		maSach = maISBN ;
+		strcat(maSach,itoa(stt,buffer,10));
 		if(strlen(maSach)==0){
 			printf("Ma sach khong duoc rong");
 			goto NHAPMA;
 		}
 		if (checkMaDMS(ls, maSach) == 1) {
-			printf("Ma sach trung");
+		//	printf("Ma sach trung");
 			goto NHAPMA;
 		}
 		
 		if (strcmp(maSach,"0") == 0) {
 			break;
 		}
+		printf("%s",maSach);
 		strcpy(item.MaSach,maSach);	
 	NHAPTT:
 		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");		
 		trangThai= InputType(1,endchar,2);
 		int _trangThai = atoi(trangThai);	
-		
+		if (endchar == ESC) {
+			break;
+		}
 		if(strlen(trangThai)==0){
 			printf("Trang Thai khong duoc rong");
 			goto NHAPTT;
@@ -307,7 +314,7 @@ void HienThiMenu(LISTDMS &ls) {
 	 	switch (choice) {
 	    case 1: 
 	    		clrscr();
-	    		NhapDMSach(ls);
+	    		NhapDMSach(ls,s);
 				break;
 	    case 2:	printf(MENU_DMS[1]); 
 	    	//	xoaDau(ls);
