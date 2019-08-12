@@ -9,6 +9,19 @@ enum TrangThaiDMS {
 	DATHANHLY = 2
 };
 
+char *stringTrangThaiDMS (int trangThai) {
+	switch(trangThai){
+		case 0:
+			return "Duoc muon    ";
+		case 1:
+			return "Da Duoc Muon ";	
+		case 2:
+			return "Da Thanh Ly  ";	
+	};
+	
+	
+}
+
 typedef struct DanhMucSach {
 	char MaSach[21];
 	int trangthaiDMS;
@@ -46,15 +59,33 @@ NodeDMS_PTR NewNode_DMS(DanhMucSach dm){
 	return p;
 }
 
+void capnhatTrangThai(LISTDMS &ls, char *masach, int trangthai){
+	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
+		if (strcmp(p->dms.MaSach, masach) == 0){
+			p->dms.trangthaiDMS = trangthai;
+		}
+	}
 
-int checkMaDMS(LISTDMS ls, char masach[]){
+}
+
+int checkMaDMS(LISTDMS ls, char *masach){
 	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
 		if (strcmp(p->dms.MaSach, masach) == 0){
 			return 1;
-		}else{
-			return 0;
 		}
 	}
+	return 0;
+
+}
+
+NodeDMS_PTR pNodeDMS(LISTDMS listDMS, char *masach){
+	for(NodeDMS_PTR p = listDMS.dmsFirst; p != NULL; p = p->dmsNext) {
+		if (strcmp(p->dms.MaSach, masach) == 0){
+			return p;
+		}
+	}
+	return NULL;
+
 }
 
 void themDau(LISTDMS &lsDMS, DanhMucSach dms) {

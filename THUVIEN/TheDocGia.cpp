@@ -287,7 +287,7 @@ void XuatDSDG(tree l){
 }
 
 
-TheDocGia _NhapDuLieuDG(tree &l){
+TheDocGia _NhapDuLieuDG(tree &l, LISTDS listDauSach){
 	int endchar;
 	int maThe;
 	char *ho;
@@ -353,7 +353,7 @@ TrangThaiThe:
 		goto TrangThaiThe;
 	}
 NhapMT:
-	NhapMT(listMTDG);
+	NhapMT(listMTDG,listDauSach);
 	item.MaThe = maThe;
 	strcpy(item.Ho,ho);
 	strcpy(item.Ten,ten);
@@ -591,13 +591,12 @@ void menuXemDanhSachDG(tree ls) {
 	
 }
 
-void HienThiMenuDocGia(tree &ls) {
+void HienThiMenuDocGia(tree &ls, LISTDS &lsDauSach) {
 	int choice;
 	int endchar;
 	char *s;
 	int maTDG;
 	Node_DocGiaPTR nodeDG;
-	LISTDS lsDauSach;
 
 	do {
 		for (int i = 0; i < 7; i++) {
@@ -615,8 +614,9 @@ void HienThiMenuDocGia(tree &ls) {
 				
 				break;
 	    case 2:	printf("\nNhap Dau Sach\n"); 
-				khoitaoDauSach(lsDauSach);
-				HienThiMenuDauSach(lsDauSach);
+				NhapThemDauSach(lsDauSach);
+
+			//	HienThiMenuDauSach(lsDauSach);
 
 	          break;
 	    case 3:
@@ -628,6 +628,9 @@ void HienThiMenuDocGia(tree &ls) {
 	    	getch(); 
 	        break;
 	    case 4:
+	    	XuatDauSach(lsDauSach);
+	    	getch(); 
+
 	    	break;
 	    case 5:
 			printf("\n");
@@ -643,6 +646,14 @@ void HienThiMenuDocGia(tree &ls) {
 		   }
 	   		DuyetLNR(ls,f);
 	   		fclose(f);
+	   		
+			if ((f = fopen("dausach2.bin","wb+") )== NULL){
+		       printf("Error! opening file");
+		       exit(1);
+		   }
+	   		//luuFileDAUSACH(ls,f);
+	   		LuuDauSach(lsDauSach,"dausach2.bin","wb+");
+	   		fclose(f);
 
 	   		printf("Da luu");
 	   		getch();
@@ -651,17 +662,21 @@ void HienThiMenuDocGia(tree &ls) {
 	    	printf("Nhap ma the doc gia:");
 	    	maTDG = atoi(InputType(6,endchar,2));
 	    	nodeDG = timDG(ls,maTDG);
-	    	XuatDG(nodeDG->tdg);
-	    	if (demSoSachDangMuon(nodeDG->tdg.lsMuonTra) == 3) {
-				printf("Doc gia da muon toi da so luong cho phep!");
-			} else if (sachQuaHan7Ngay(nodeDG->tdg.lsMuonTra) == 1) {
-				printf("Doc gia khong muon vi da giu sach qua 7 ngay!");
-				
-			} else {
-				
-				khoiTaoDSMUONTRA(nodeDG->tdg.lsMuonTra);
-				NhapMT(nodeDG->tdg.lsMuonTra);
+	    	if (nodeDG != NULL){
+	    		XuatDG(nodeDG->tdg);
+		    	if (demSoSachDangMuon(nodeDG->tdg.lsMuonTra) == 3) {
+					printf("Doc gia da muon toi da so luong cho phep!");
+				} else if (sachQuaHan7Ngay(nodeDG->tdg.lsMuonTra) == 1) {
+					printf("Doc gia khong muon vi da giu sach qua 7 ngay!");
+					
+				} else {
+					
+					khoiTaoDSMUONTRA(nodeDG->tdg.lsMuonTra);
+					NhapMT(nodeDG->tdg.lsMuonTra,lsDauSach);
+					XuatDSMT(nodeDG->tdg.lsMuonTra);
+				}
 			}
+
 	    	
 	    	getch(); 
 	    	break;
@@ -675,8 +690,13 @@ void HienThiMenuDocGia(tree &ls) {
 
 int main() {
 	tree ls;
+	LISTDS lsDauSach;
 	KhoiTaoDocGia(ls);
 	docFileDSDG(ls);
-	HienThiMenuDocGia(ls);
+//Dau Sach
+	khoitaoDauSach(lsDauSach);
+	DocDauSach(lsDauSach,"rb","dausach2.bin");
+	
+	HienThiMenuDocGia(ls,lsDauSach);
 
 }

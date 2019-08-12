@@ -140,13 +140,11 @@ int dauSachDay(LISTDS ls) {
 
 int kiemTraMaISBN(LISTDS ls, char *maISBN) {
 	for (int i = 0; i <= ls.soluong; i++) {
-		if (strcmp(ls.nodeDS[i]->ISBN,maISBN) == 0){
+		if (strcmp(removeSpaces(ls.nodeDS[i]->ISBN),maISBN) == 0){
 			return 1;
-		} else {
-
-			return 0;
 		}
 	}
+	return 0;
 }
 
 LISTDS taoDStheoTL(LISTDS ls, int theloai) {
@@ -236,6 +234,29 @@ pDAUSACH timkiemDauSachTuanTuTheoTen(LISTDS ls,char *tenSachCanTim) {
         return NULL; 
 }
 
+int KiemTraMaSachTraVeViTri(LISTDS listDauSach, char *masach) {
+	NodeDMS_PTR p;
+	for (int i = 0; i <= listDauSach.soluong; i++) {
+		p = pNodeDMS(listDauSach.nodeDS[i]->dms,masach);
+		if (p != NULL) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+NodeDMS_PTR KiemTraMaSach(LISTDS listDauSach, char *masach) {
+	NodeDMS_PTR p;
+	for (int i = 0; i <= listDauSach.soluong; i++) {
+		p = pNodeDMS(listDauSach.nodeDS[i]->dms,masach);
+		if (p != NULL) {
+			return p;
+		}
+	}
+	return NULL;
+
+}
+
 void XuatThongTinDauSach(pDAUSACH pDS) {
 	clrscr();
 	printf("\nMa ISBN: %s\n",pDS->ISBN);
@@ -251,7 +272,7 @@ void XuatThongTinDauSach(pDAUSACH pDS) {
 
 void XuatDauSach(LISTDS ls) {
 	clrscr();
-	for (int i = 0; i <= ls.soluong; i++) {
+	for (int i = 0; i < ls.soluong; i++) {
 		printf("\nMa ISBN: %s\n",ls.nodeDS[i]->ISBN);
 		printf("Ten sach: %s\n",ls.nodeDS[i]->TenSach);
 		printf("Tac gia: %s\n",ls.nodeDS[i]->TacGia);
@@ -308,7 +329,8 @@ void NhapThemDauSach(LISTDS &ls) {
 	NHAPISBN:
 		printf("\nMa ISBN:");
 		_isbn = InputType(6,endchar,1);
-		uppercaseChar(removeSpaces(_isbn));
+		strcpy(_isbn,removeSpaces(_isbn));
+		uppercaseChar(_isbn);
 
 		if (endchar == ESC) {
 			break;
@@ -381,9 +403,7 @@ void NhapThemDauSach(LISTDS &ls) {
 		printf("\nNhap the loai:");
 		tl = (InputType(1,endchar,2));
 		theloai = atoi(tl);
-		printf("===%d",endchar);
-		if (strlen(theloai+"") == 0 || tl[0]=='\0'){
-		
+		if (strcmp(tl,"") == 0){
 			printf("The loai khong duoc bo trong!");
 			goto NHAPTHELOAI;
 		}
@@ -421,13 +441,21 @@ void NhapThemDauSach(LISTDS &ls) {
 	//Danh muc sach
 		printf("\n\n==> NHAP DANH MUC SACH <==\n\n");
 		khoiTaoDMS(ds->dms);
+	NHAPSOLUONG:
 		printf("\nNhap so luong tai ban:");
 		soLuong = atoi(InputType(5,endchar,2));
-		
+		if (soLuong == 0) {
+			printf("\nSo luong phai khac 0!");
+			goto NHAPSOLUONG;
+		}
+	NHAPVITRILUUTRU:	
 		printf("\nNhap vi tri luu tru:");
 		viTri = InputType(200,endchar,1);
+		if (strcmp(viTri,"") == 0) {
+			printf("\nVi tri luu tru khong duoc bo trong!");
+			goto NHAPVITRILUUTRU;
+		}
 		uppercaseChar(viTri);
-			
 		NhapVitriSLDMS(ds->dms,ds->ISBN, viTri, 0, soLuong);
 	
 	//cap nhat danh sach		
@@ -538,7 +566,7 @@ void LuuDauSach(LISTDS lsDS,char *tenfile,char *mode){
 	for(int i=0;i<lsDS.soluong+1;i++){
 		
 		fwrite(lsDS.nodeDS[i],sizeof(DAUSACH),1,f);
-		cout<<"luu"<<lsDS.nodeDS[i]->ISBN;
+	//	cout<<"luu"<<lsDS.nodeDS[i]->ISBN;
 		for(NodeDMS_PTR p = lsDS.nodeDS[i]->dms.dmsFirst;p!=NULL;p=p->dmsNext){
 			fwrite(&p->dms,sizeof(DanhMucSach),1,f);
 		}
@@ -557,7 +585,7 @@ void DocDauSach(LISTDS &lsDS,char *mode,char *tenfile){
 	DanhMucSach dms;
 	pDAUSACH ds;
 	khoitaoDauSach(lsDS);
-	cout<<"soluong "<<lsDS.soluong<<endl;
+//	cout<<"soluong "<<lsDS.soluong<<endl;
 	while(fread(lsDS.nodeDS[++lsDS.soluong] = new DAUSACH,sizeof(DAUSACH),1,f)){
 		if(strcmp(lsDS.nodeDS[lsDS.soluong]->ISBN,"@@")==0)
 			break;
@@ -565,11 +593,11 @@ void DocDauSach(LISTDS &lsDS,char *mode,char *tenfile){
 		while(fread(&dms,sizeof(DanhMucSach),1,f)){
 			if(strcmp(dms.MaSach,"@@")==0)
 				break;
-			cout<<"Masach :"<<dms.MaSach<<endl;
+			//cout<<"Masach :"<<dms.MaSach<<endl;
 			themCuoi(lsDS.nodeDS[lsDS.soluong]->dms,dms);
 		}
 	}
-	getch();
+//	getch();
 	fclose(f);
 }
 
@@ -615,7 +643,7 @@ void HienThiMenuDauSach(LISTDS &ls) {
 	    	break;
 	    case 5:
 	    	FILE *f;
-			if ((f = fopen("DAUSACH.bin","wb+") )== NULL){
+			if ((f = fopen("dausach2.bin","wb+") )== NULL){
 		       printf("Error! opening file");
 		       exit(1);
 		   }

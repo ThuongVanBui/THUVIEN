@@ -60,6 +60,8 @@ int checkMaDMS(LISTMT ls, char *masach){
 	}
 }
 
+
+
 int demDS(LISTMT ls){
 	int dem = 0;
 	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
@@ -233,7 +235,7 @@ void xoaDauMT(LISTMT &ls) {
 
 
 
-void NhapMT(LISTMT &ls) {
+void NhapMT(LISTMT &ls, LISTDS &listDS) {
 	int c;
 	int vitri;
 	int endchar;
@@ -241,23 +243,34 @@ void NhapMT(LISTMT &ls) {
 	char *trangThai;
 	NGAY_THANG ngaymuon;
 	NGAY_THANG ngaytra;
+	int vitriDMSTrongDS;
+	NodeDMS_PTR pNODEdanhmucsach;
 	while(true) {
 		DanhSachMuonTra item;
 	NHAPMA:
 		printf("\nNhap ma sach:");
 		maSach =InputType(20,endchar,1);
+		uppercaseChar(maSach);
+		if (strcmp(maSach,"0") == 0) {
+			break;
+		}
 		if(strlen(maSach)==0){
 			printf("Ma sach khong duoc rong");
 			goto NHAPMA;
 		}
-		if (checkMaDMS(ls, maSach) == 1) {
-			printf("Ma sach trung");
+		vitriDMSTrongDS = KiemTraMaSachTraVeViTri(listDS, maSach);
+		pNODEdanhmucsach = KiemTraMaSach(listDS, maSach);
+		if (pNODEdanhmucsach == NULL) {
+			printf("Ma sach khong ton tai");
 			goto NHAPMA;
+		} 
+
+		if (pNODEdanhmucsach->dms.trangthaiDMS != 0){
+			printf("\nSach nay: %s",stringTrangThaiDMS(pNODEdanhmucsach->dms.trangthaiDMS));
+			goto NHAPMA;
+
 		}
 		
-		if (strcmp(maSach,"0") == 0) {
-			break;
-		}
 		strcpy(item.MaSach,maSach);
 	NHAPNGAYMUON:
 		LayNgayGioHT(ngaymuon);
@@ -274,7 +287,7 @@ void NhapMT(LISTMT &ls) {
 		item.NgayTra = ngaytra;
 		
 	NHAPTT:
-		printf("\nNhap trang thai(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");		
+		printf("\nTrang thai sach(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");
 		trangThai= InputType(1,endchar,2);
 		int _trangThai = atoi(trangThai);	
 		
@@ -288,8 +301,14 @@ void NhapMT(LISTMT &ls) {
 			goto NHAPTT;
 		}
 		item.trangthaiMT = _trangThai;
+		
 
+		
 		themDau(ls,item);
+		if (item.trangthaiMT == 0 && vitriDMSTrongDS != -1) {
+			capnhatTrangThai(listDS.nodeDS[vitriDMSTrongDS]->dms,maSach,1);
+
+		}
 	};	
 }
 
@@ -402,7 +421,7 @@ void HienThiMenu(LISTMT &ls) {
 	 	switch (choice) {
 	    case 1: 
 	    		clrscr();
-	    		NhapMT(ls);
+	    	//	NhapMT(ls);
 				break;
 	    case 2:	printf(MENU_DOCGIA[1]); 
 	    	//	xoaDau(ls);
