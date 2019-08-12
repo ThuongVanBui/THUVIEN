@@ -92,15 +92,15 @@ int wherey( void )
     return screen_buffer_info.dwCursorPosition.Y;
 }
 void clreol( ) {
-	COORD coord;
-	DWORD written;
-	CONSOLE_SCREEN_BUFFER_INFO info;
-	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
-	coord.X = info.dwCursorPosition.X;
-	coord.Y = info.dwCursorPosition.Y;
-	FillConsoleOutputCharacter (GetStdHandle(STD_OUTPUT_HANDLE), ' ',
-	  info.dwSize.X - info.dwCursorPosition.X * info.dwCursorPosition.Y, coord, &written);
-	gotoxy (info.dwCursorPosition.X , info.dwCursorPosition.Y );
+COORD coord;
+DWORD written;
+CONSOLE_SCREEN_BUFFER_INFO info;
+GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+coord.X = info.dwCursorPosition.X;
+coord.Y = info.dwCursorPosition.Y;
+FillConsoleOutputCharacter (GetStdHandle(STD_OUTPUT_HANDLE), ' ',
+  info.dwSize.X - info.dwCursorPosition.X * info.dwCursorPosition.Y, coord, &written);
+gotoxy (info.dwCursorPosition.X , info.dwCursorPosition.Y );
 }
 
 void SetColor(WORD color)

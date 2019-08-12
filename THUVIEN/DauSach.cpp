@@ -111,11 +111,17 @@ typedef struct DauSach *pDAUSACH;
 
 struct listDAUSACH {
 	int soluong = -1;
-	pDAUSACH nodeDS[MAXLIST];
+	DAUSACH *nodeDS[MAXLIST];
 
 };
 typedef struct listDAUSACH LISTDS;
 
+int randomsMADS() {
+	int lower = 100000, upper = 999999;
+	srand(time(0)); 
+	return (rand() % (upper - lower + 1)) + lower; 
+	
+}
 
 //khoi tao dau sach
 void khoitaoDauSach(LISTDS &ls) {
@@ -296,6 +302,7 @@ void NhapThemDauSach(LISTDS &ls) {
 
 		
 	while(true){
+
 		ds = new DAUSACH;
 		
 	NHAPISBN:
@@ -332,7 +339,6 @@ void NhapThemDauSach(LISTDS &ls) {
 
 		}
 
-		
 	NHAPSOTRANG:
 		printf("\nNhap so trang:");
 		sotrang = atoi(InputType(10,endchar,2));
@@ -368,6 +374,7 @@ void NhapThemDauSach(LISTDS &ls) {
 			goto NHAPNAMXUATBAN;		
 		}
 		
+
 	
 	NHAPTHELOAI:
 		xuatTheLoai(200,200);
@@ -386,6 +393,7 @@ void NhapThemDauSach(LISTDS &ls) {
 
 		}  
 		
+
 		printf(":%s",stringtheloai(kieutheloai(theloai)));
 		
 
@@ -393,6 +401,8 @@ void NhapThemDauSach(LISTDS &ls) {
 		if (endchar == ESC) {
 			break;
 		}
+
+	
 		
 		//cap nhat dau sach
 			strcpy(ds->ISBN, _isbn);
@@ -433,21 +443,63 @@ void NhapThemDauSach(LISTDS &ls) {
 		
 }
 
+
+//void XuatDauSach(LISTDS ls) {
+//	
+//	for (int i = 0; i <= ls.soluong; i++) {
+//		printf("\nMa ISBN: %s\n",ls.nodeDS[i]->ISBN);
+//		printf("Ten sach: %s\n",ls.nodeDS[i]->TenSach);
+//		printf("Tac gia: %s\n",ls.nodeDS[i]->TacGia);
+//		printf("The loai: %s\n",ls.nodeDS[i]->TheLoai);
+//		printf("So Trang: %d\n",ls.nodeDS[i]->SoTrang);
+//		printf("Nam xuat ban: %d\n",ls.nodeDS[i]->NamXuatBan);
+//		printf("\n\n==> DANH MUC SACH <==\n\n");
+//		XuatDMS(ls.nodeDS[i]->dms);
+//}
+//}
+//void docFileDAUSACH(LISTDS &ls) {
+//	clrscr();
+//	pDAUSACH ds ;
+//	int i = 0;
+//	FILE *f;
+//	 if ((f = fopen("DAUSACH.bin","rb") )== NULL){
+//       printf("Error! opening file");
+//       exit(1);
+//   }
+//   
+//   	while(fread(&ds, sizeof(mt), 1, f)) {
+//   		
+//	}
+// 
+//	while(fread(&mt, sizeof(mt), 1, f)) {
+//		themCuoi(ls, mt);	
+//	}
+//	fclose(f);
+//	return; 
+//}
+
+
+
 void docFileDAUSACH(LISTDS &ls) {
 	DanhMucSach dms;
 	pDAUSACH pds;
+	
 	int i = 0;
 	FILE *f;
 	 if ((f = fopen("DAUSACH.bin","rb") )== NULL){
        printf("Error! opening file");
        exit(1);
    }
- //  khoitaoDauSach(ls);
-   
- 	while(fread(pds,sizeof(pds),1,f)){
+   khoitaoDauSach(ls);
+   cout<<"So luong"<<ls.soluong<<endl;
+   getch();
+   	
+ 	while(fread(pds = new DAUSACH,sizeof(DAUSACH),1,f)){
  		if(strcmp(pds->ISBN,"@@")==0){
-		 break;
+		 	break;
 		 }
+		 cout<<"ISBN"<<pds->ISBN;
+		 getch();
 		khoiTaoDMS(pds->dms);
  		while(fread(&dms, sizeof(DanhMucSach), 1, f)) {
 			//NodeMT_PTR nodeMT = newNodeMT(mt);
@@ -457,7 +509,6 @@ void docFileDAUSACH(LISTDS &ls) {
 			themCuoi(pds->dms,dms);
 		}
 		ls.soluong++;
-		
 		ls.nodeDS[ls.soluong] = pds;
 	 }
 	
@@ -468,7 +519,7 @@ void docFileDAUSACH(LISTDS &ls) {
 void luuFileDAUSACH(LISTDS lsDS, FILE *f) {
 	int i = 0;
 	while(i <= lsDS.soluong){
-		fwrite(&lsDS.nodeDS[i],sizeof(DAUSACH), 1, f);
+		fwrite(lsDS.nodeDS[i],sizeof(DAUSACH), 1, f);
 		LISTDMS lsdms = lsDS.nodeDS[i]->dms;
 		for(NodeDMS_PTR p = lsdms.dmsFirst; p != NULL; p = p->dmsNext) {
 			fwrite(&p->dms,sizeof(DanhMucSach),1,f);
@@ -479,10 +530,48 @@ void luuFileDAUSACH(LISTDS lsDS, FILE *f) {
 		fwrite(&temp,sizeof(DanhMucSach),1,f);
 		i++;
 	}
-	
-
 }
-
+void LuuDauSach(LISTDS lsDS,char *tenfile,char *mode){
+	FILE *f = fopen(tenfile,mode);
+	if(f==NULL)
+		return;
+	for(int i=0;i<lsDS.soluong+1;i++){
+		
+		fwrite(lsDS.nodeDS[i],sizeof(DAUSACH),1,f);
+		cout<<"luu"<<lsDS.nodeDS[i]->ISBN;
+		for(NodeDMS_PTR p = lsDS.nodeDS[i]->dms.dmsFirst;p!=NULL;p=p->dmsNext){
+			fwrite(&p->dms,sizeof(DanhMucSach),1,f);
+		}
+		DanhMucSach temp;
+		strcpy(temp.MaSach,"@@");
+		fwrite(&temp,sizeof(DanhMucSach),1,f);
+	}
+	getch();
+	fclose(f);
+}
+void DocDauSach(LISTDS &lsDS,char *mode,char *tenfile){
+	FILE *f=fopen(tenfile,mode);
+	if(f==NULL)
+		return;
+	fseek(f,0,SEEK_SET);
+	DanhMucSach dms;
+	pDAUSACH ds;
+	khoitaoDauSach(lsDS);
+	cout<<"soluong "<<lsDS.soluong<<endl;
+	while(fread(lsDS.nodeDS[++lsDS.soluong] = new DAUSACH,sizeof(DAUSACH),1,f)){
+		if(strcmp(lsDS.nodeDS[lsDS.soluong]->ISBN,"@@")==0)
+			break;
+			khoiTaoDMS(lsDS.nodeDS[lsDS.soluong]->dms);
+		while(fread(&dms,sizeof(DanhMucSach),1,f)){
+			if(strcmp(dms.MaSach,"@@")==0)
+				break;
+			cout<<"Masach :"<<dms.MaSach<<endl;
+			themCuoi(lsDS.nodeDS[lsDS.soluong]->dms,dms);
+		}
+	}
+	getch();
+	fclose(f);
+}
 
 void HienThiMenuDauSach(LISTDS &ls) {
 	int choice;
@@ -507,7 +596,8 @@ void HienThiMenuDauSach(LISTDS &ls) {
 
 				break;
 	    case 2:	
-	    		
+	    	//docFileDAUSACH(ls);
+	    	DocDauSach(ls,"rb","dausach2.bin");
 	          break;
 	    case 3:
 
@@ -529,7 +619,8 @@ void HienThiMenuDauSach(LISTDS &ls) {
 		       printf("Error! opening file");
 		       exit(1);
 		   }
-	   		luuFileDAUSACH(ls,f);
+	   		//luuFileDAUSACH(ls,f);
+	   		LuuDauSach(ls,"dausach2.bin","wb+");
 	   		fclose(f);
 
 	   		printf("Da luu");
@@ -581,3 +672,4 @@ void HienThiMenuDauSach(LISTDS &ls) {
 //	
 ////	XuatDauSach(ls);
 //}
+
