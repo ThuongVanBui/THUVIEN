@@ -285,6 +285,7 @@ void NhapThemDauSach(LISTDS &ls) {
 	int sotrang;
 	int namXB;
 	int theloai;
+	char *tl;
 	char *tenSach;
 	
 	
@@ -371,12 +372,19 @@ void NhapThemDauSach(LISTDS &ls) {
 	NHAPTHELOAI:
 		xuatTheLoai(200,200);
 		printf("\nNhap the loai:");
-		theloai = atoi(InputType(50,endchar,2));
+		tl = (InputType(1,endchar,2));
+		theloai = atoi(tl);
+		printf("===%d",endchar);
+		if (strlen(theloai+"") == 0 || tl[0]=='\0'){
+		
+			printf("The loai khong duoc bo trong!");
+			goto NHAPTHELOAI;
+		}
 		if (theloai < 0 || theloai > 8) {
 			printf("The loai khong ton tai!\n");
-			goto NHAPNAMXUATBAN;
+			goto NHAPTHELOAI;
 
-		}
+		}  
 		
 		printf(":%s",stringtheloai(kieutheloai(theloai)));
 		
@@ -562,14 +570,14 @@ void HienThiMenuDauSach(LISTDS &ls) {
 }
 
 
-int main() {
-	LISTDS ls;
-	khoitaoDauSach(ls);
-//	docFileDAUSACH(ls);
-//	XuatDauSach(ls);
-	HienThiMenuDauSach(ls);
-	//NhapThemDauSach(ls);
-//	nhapDauSach(ls);
-	
-//	XuatDauSach(ls);
-}
+//int main() {
+//	LISTDS ls;
+//	khoitaoDauSach(ls);
+////	docFileDAUSACH(ls);
+////	XuatDauSach(ls);
+//	HienThiMenuDauSach(ls);
+//	//NhapThemDauSach(ls);
+////	nhapDauSach(ls);
+//	
+////	XuatDauSach(ls);
+//}

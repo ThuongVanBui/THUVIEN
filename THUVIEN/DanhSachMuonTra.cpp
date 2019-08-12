@@ -1,4 +1,4 @@
-#include "mylib.h"
+#include "DauSach.cpp"
 
 char MENU_DOCGIA[7][30] 		= {"1.Them    ","2.Xoa     ","3. Sua         ","4.Them item theo vi tri     ","5.Xem DS     ","6.Luu tep     ", "7.Tim doc gia      " };
 
@@ -9,7 +9,7 @@ enum TrangThaiMT {
 };
 
 typedef struct DanhSachMuonTra {
-	char MaSach[20];
+	char MaSach[21];
 	NGAY_THANG NgayMuon;
 	NGAY_THANG NgayTra;
 	int trangthaiMT;
@@ -38,7 +38,7 @@ int Rong(LISTMT l) {
 	return l.mtFirst == NULL ? 0 : 1;
 }
 
-void khoiTao(LISTMT &l) {
+void khoiTaoDSMUONTRA(LISTMT &l) {
 	l.mtFirst = l.mtLast = NULL;
 }
 
@@ -67,6 +67,32 @@ int demDS(LISTMT ls){
 	}
 	
 	return dem;
+}
+
+int demSoSachDangMuon(LISTMT ls){
+	int dem = 0;
+	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
+		if (p->DSMT.trangthaiMT == 0) {
+			dem += 1;
+
+		}
+	}
+	
+	return dem;
+}
+
+
+
+int sachQuaHan7Ngay(LISTMT ls) {
+	
+	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
+		if (KhoangCachNgay(p->DSMT.NgayTra) == 7) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+	
 }
 
 void themDau(LISTMT &l, DanhSachMuonTra mt) {
@@ -409,7 +435,7 @@ void HienThiMenu(LISTMT &ls) {
 
 //int main() {
 //	LISTMT ls;
-//	khoiTao(ls);
+//	khoiTaoDSMUONTRA(LISTMT &l)ls);
 //	docFile(ls);
 //	HienThiMenu(ls);
 //}
