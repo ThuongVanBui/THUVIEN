@@ -1,6 +1,6 @@
 #include "mylib.h"
 
-char MENU_DMS[6][30] 		= {"1.Them    ","2.Xoa     ","3. Sua         ","4.Them item theo vi tri     ","5.Xem DS     ","6.Luu tep     " };
+char MENU_DOCGIA[7][30] 		= {"1.Them    ","2.Xoa     ","3. Sua         ","4.Them item theo vi tri     ","5.Xem DS     ","6.Luu tep     ", "7.Tim doc gia      " };
 
 enum TrangThaiMT {
 	DANGMUON = 0,
@@ -366,7 +366,7 @@ void HienThiMenu(LISTMT &ls) {
 	char *s;	
 	do {
 		for (int i = 0; i < 5; i++) {
-			printf(MENU_DMS[i]);
+			printf(MENU_DOCGIA[i]);
 		}
 		gotoxy(20,20);
 		printf("ESC: Thoat");
@@ -378,7 +378,7 @@ void HienThiMenu(LISTMT &ls) {
 	    		clrscr();
 	    		NhapMT(ls);
 				break;
-	    case 2:	printf(MENU_DMS[1]); 
+	    case 2:	printf(MENU_DOCGIA[1]); 
 	    	//	xoaDau(ls);
 	    //		xoaCuoi(ls);
 	    	//	luuFile(ls);
