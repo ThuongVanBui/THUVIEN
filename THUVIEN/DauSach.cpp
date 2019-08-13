@@ -245,6 +245,10 @@ int KiemTraMaSachTraVeViTri(LISTDS listDauSach, char *masach) {
 	return -1;
 }
 
+void XuatThongTinSachDGTra() {
+	
+}
+
 NodeDMS_PTR KiemTraMaSach(LISTDS listDauSach, char *masach) {
 	NodeDMS_PTR p;
 	for (int i = 0; i <= listDauSach.soluong; i++) {
@@ -272,7 +276,7 @@ void XuatThongTinDauSach(pDAUSACH pDS) {
 
 void XuatDauSach(LISTDS ls) {
 	clrscr();
-	for (int i = 0; i < ls.soluong; i++) {
+	for (int i = 0; i <= ls.soluong; i++) {
 		printf("\nMa ISBN: %s\n",ls.nodeDS[i]->ISBN);
 		printf("Ten sach: %s\n",ls.nodeDS[i]->TenSach);
 		printf("Tac gia: %s\n",ls.nodeDS[i]->TacGia);
@@ -298,6 +302,15 @@ void XuatDauSachTheoTheLoai(LISTDS ls) {
 //			XuatDMS(ls.nodeDS[i]->dms);
 
 	}
+}
+
+char *MaSachDuocPhepMuon(LISTDS ls, char *tenSachCanTim) {
+	pDAUSACH sachtimDuoc = timkiemDauSachTheoTen(ls,tenSachCanTim);
+	if (sachtimDuoc != NULL) {
+		return MaSachHopLe(sachtimDuoc->dms);
+		
+	}
+	return "";
 }
 
 void NhapThemDauSach(LISTDS &ls) {
@@ -564,7 +577,6 @@ void LuuDauSach(LISTDS lsDS,char *tenfile,char *mode){
 	if(f==NULL)
 		return;
 	for(int i=0;i<lsDS.soluong+1;i++){
-		
 		fwrite(lsDS.nodeDS[i],sizeof(DAUSACH),1,f);
 	//	cout<<"luu"<<lsDS.nodeDS[i]->ISBN;
 		for(NodeDMS_PTR p = lsDS.nodeDS[i]->dms.dmsFirst;p!=NULL;p=p->dmsNext){
@@ -586,17 +598,19 @@ void DocDauSach(LISTDS &lsDS,char *mode,char *tenfile){
 	pDAUSACH ds;
 	khoitaoDauSach(lsDS);
 //	cout<<"soluong "<<lsDS.soluong<<endl;
-	while(fread(lsDS.nodeDS[++lsDS.soluong] = new DAUSACH,sizeof(DAUSACH),1,f)){
-		if(strcmp(lsDS.nodeDS[lsDS.soluong]->ISBN,"@@")==0)
+	while(fread(ds = new DAUSACH,sizeof(DAUSACH),1,f)){
+		if(strcmp(ds->ISBN,"@@")==0)
 			break;
-			khoiTaoDMS(lsDS.nodeDS[lsDS.soluong]->dms);
+		khoiTaoDMS(ds->dms);
 		while(fread(&dms,sizeof(DanhMucSach),1,f)){
 			if(strcmp(dms.MaSach,"@@")==0)
 				break;
 			//cout<<"Masach :"<<dms.MaSach<<endl;
-			themCuoi(lsDS.nodeDS[lsDS.soluong]->dms,dms);
+			themCuoi(ds->dms,dms);
 		}
+		lsDS.nodeDS[++lsDS.soluong] = ds;
 	}
+	
 //	getch();
 	fclose(f);
 }

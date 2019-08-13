@@ -10,6 +10,8 @@ enum Phai {
 	Nu = 1
 };
 
+typedef int (*comparer)(int, int);
+
 int index = 0;
 
 struct TenHo
@@ -133,11 +135,92 @@ Node_THEDOCGIA* XoaDG( tree &root, int maTDG )
     return root;
 }
 
+Node_DocGiaPTR findMin(tree root)
+{
+    while(root->tdgLeft != NULL)
+    {
+        root = root->tdgLeft;
+    }
+    return root;
+}
 
+
+void XuatDG(TheDocGia dg);
+Node_DocGiaPTR SearchDG(tree root,int value)
+{ 
+	if(root==NULL)
+		return NULL;
+	else if(root->tdg.MaThe == value)
+	{
+		XuatDG(root->tdg);
+		return root;
+	}
+	else if(value < root->tdg.MaThe)
+		SearchDG(root->tdgLeft,value);
+	else if(value > root->tdg.MaThe)
+		SearchDG(root->tdgRight,value);
+}
+
+
+
+
+Node_DocGiaPTR XOAMOTDOCGIA( tree &root,int value)
+{ 
+
+//	bool c = SearchDG(root,value);
+	
+	if(root==NULL)
+		return root;
+	else if(value < root->tdg.MaThe)
+	{
+		root->tdgLeft= XOAMOTDOCGIA(root->tdgLeft,value);
+	}
+	else if(value > root->tdg.MaThe)
+	{
+		root->tdgRight= XOAMOTDOCGIA(root->tdgRight,value);
+	}
+	
+	// Node deletion
+	else
+	{
+		//case 1: Leaf Node
+		if(root->tdgLeft  ==NULL && root->tdgRight == NULL)
+		{
+			delete root;
+			root = NULL;
+			return root;
+		}
+		//case 2: one child
+		else if(root->tdgLeft == NULL)
+		{
+			Node_DocGiaPTR temp = root;
+			root = root->tdgRight;
+			delete temp;
+			return root;
+		}
+		else if(root->tdgRight == NULL)
+		{
+			Node_DocGiaPTR temp = root;
+			root = root->tdgLeft;
+			delete temp;
+			return root;
+		}
+		//case 3: 2 child
+		else
+		{
+			Node_DocGiaPTR temp = findMin(root->tdgRight);
+			root->tdg = temp->tdg;
+			root->tdgRight = XOAMOTDOCGIA(root->tdgRight,temp->tdg.MaThe);
+		}
+		
+	}
+	return root;
+
+}
 
 
 void ThemDG(tree &l,TheDocGia dg){
-	Node_DocGiaPTR p=newNodeDG(dg);
+	Node_DocGiaPTR p = newNodeDG(dg);
 	if(l==NULL){
 		l=p;
 		return;
@@ -216,7 +299,7 @@ void XuatDG(TheDocGia dg){
 			printf("\nPhai : Nam");
 			break;
 		case Nu:
-			printf("\Phai : Nu");
+			printf("\nPhai : Nu");
 			break;
 	}
 	
@@ -236,6 +319,33 @@ void XuatDG(TheDocGia dg){
 	
 }
 
+
+void XuatDGTRASACH(TheDocGia dg){
+	printf("\nMa the doc gia: %d",dg.MaThe);
+	uppercaseChar(dg.Ho);
+	printf("\nHo : %s",dg.Ho);
+	uppercaseChar(dg.Ten);
+	printf("\nTen : %s",dg.Ten);
+	switch(dg.phai){
+		case Nam:
+			printf("\nPhai : Nam");
+			break;
+		case Nu:
+			printf("\nPhai : Nu");
+			break;
+	}
+	
+	switch(dg.trangthaithe){
+		case DuocPhep:
+			printf("\nTrang thai : Duoc phep\n");
+			break;
+		case KhongDuocPhep:
+			printf("\nTrang thai : Khong duoc phep\n");
+			break;
+	
+	
+	}
+}
 void XuatDGTheoStt(TheDocGia dg){
 	printf("\nMa the doc gia: %d",dg.MaThe);
 	uppercaseChar(dg.Ho);
@@ -246,7 +356,7 @@ void XuatDGTheoStt(TheDocGia dg){
 			printf("\nPhai : Nam");
 			break;
 		case Nu:
-			printf("\Phai : Nu");
+			printf("\nPhai : Nu");
 			break;
 	}
 	
@@ -505,6 +615,8 @@ void Swap_NodeTree(TEN_HO &a, TEN_HO &b)
 	a = b;
 	b = temp;
 }
+
+
 void QuicKsort_ARRTenHo(TEN_HO *th, int left, int right)
 {
 	TEN_HO key = th[(left + right) / 2];
@@ -549,14 +661,6 @@ void XuatDanhSachTheoSTT(tree ls) {
 	
 }
 
-//void xuatTENHO(tree ls,TEN_HO *arr) {
-//	
-//	for(int i = 0; i < countDG(ls); i++) {
-//		printf("%s",arr[i].HoTen);
-//	}
-//
-//}
-
 char MENU_DSDG[3][30] 		= {"1.Sap xep theo ten    ","2.Sap xep theo stt     ","ESC: Thoat     " };
 
 void menuXemDanhSachDG(tree ls) {
@@ -597,6 +701,8 @@ void HienThiMenuDocGia(tree &ls, LISTDS &lsDauSach) {
 	char *s;
 	int maTDG;
 	Node_DocGiaPTR nodeDG;
+	Node_DocGiaPTR nodeDG2 = new Node_THEDOCGIA ;
+	char *tenSachCanTim;
 
 	do {
 		for (int i = 0; i < 7; i++) {
@@ -628,14 +734,29 @@ void HienThiMenuDocGia(tree &ls, LISTDS &lsDauSach) {
 	    	getch(); 
 	        break;
 	    case 4:
-	    	XuatDauSach(lsDauSach);
+//	    	printf("%d",lsDauSach.soluong);
+			XuatDauSach(lsDauSach);
+//	    				XuatDSDG(ls);
+
 	    	getch(); 
 
 	    	break;
 	    case 5:
 			printf("\n");
+	    	printf("Nhap ma the doc gia muon xoa:");
+	    	maTDG = atoi(InputType(6,endchar,2));
+	    	//nodeDG = timDG(ls,maTDG);
+	    	nodeDG2 = SearchDG(ls,maTDG);
+	    	nodeDG2 = newNodeDG(nodeDG2->tdg);
+	    	if(nodeDG2==NULL)
+	    		cout<<"NULL"<<endl;
+	    	else{	
+				XOAMOTDOCGIA(ls,maTDG);
+	    		ThemDG(ls,nodeDG2->tdg);
+				XuatDG(nodeDG2->tdg);
+			}
 //			XuatDSDG(ls);
-			menuXemDanhSachDG(ls);
+//			menuXemDanhSachDG(ls);
 			getch();
 	         break;
 	    case 6:
@@ -659,24 +780,47 @@ void HienThiMenuDocGia(tree &ls, LISTDS &lsDauSach) {
 	   		getch();
 	    	break;
 	    case 7:
-	    	printf("Nhap ma the doc gia:");
+	    	//MUON TRA SACH
+	    NHAPMATHEDOCGIA:
+	    	clrscr();
+	    	printf("\nNhap ma the doc gia:");
 	    	maTDG = atoi(InputType(6,endchar,2));
-	    	nodeDG = timDG(ls,maTDG);
-	    	if (nodeDG != NULL){
-	    		XuatDG(nodeDG->tdg);
-		    	if (demSoSachDangMuon(nodeDG->tdg.lsMuonTra) == 3) {
-					printf("Doc gia da muon toi da so luong cho phep!");
-				} else if (sachQuaHan7Ngay(nodeDG->tdg.lsMuonTra) == 1) {
-					printf("Doc gia khong muon vi da giu sach qua 7 ngay!");
-					
-				} else {
-					
-					khoiTaoDSMUONTRA(nodeDG->tdg.lsMuonTra);
-					NhapMT(nodeDG->tdg.lsMuonTra,lsDauSach);
-					XuatDSMT(nodeDG->tdg.lsMuonTra);
-				}
+	   	
+	    	if (maTDG == 0) {
+				goto NHAPMATHEDOCGIA;
+				
 			}
-
+	    	nodeDG = timDG(ls,maTDG);
+	    	nodeDG = newNodeDG(nodeDG->tdg);
+			
+			//=====> MUON <=======//
+//	    	if (nodeDG != NULL){
+//	    		XuatDG(nodeDG->tdg);
+//		    	if (demSoSachDangMuon(nodeDG->tdg.lsMuonTra) == 3) {
+//					printf("\nDoc gia da muon toi da so luong cho phep!\n");
+//					
+//				} else if (sachQuaHan7Ngay(nodeDG->tdg.lsMuonTra) == 1) {
+//					printf("\nDoc gia khong muon vi da giu sach qua 7 ngay!\n");
+//					
+//				} else {
+//							
+//					NhapMTvoiMaSach(nodeDG->tdg.lsMuonTra,lsDauSach);
+//					
+//			    	if(nodeDG == NULL)
+//			    		cout<<"NULL"<<endl;
+//			    	else{	
+//						XOAMOTDOCGIA(ls,maTDG);
+//			    		ThemDG(ls,nodeDG->tdg);
+//					}
+//					
+//				}
+//			}
+			
+			//======> TRA <=======//
+			if (nodeDG != NULL){
+	    		XuatDGTRASACH(nodeDG->tdg);
+	    		
+			}
 	    	
 	    	getch(); 
 	    	break;

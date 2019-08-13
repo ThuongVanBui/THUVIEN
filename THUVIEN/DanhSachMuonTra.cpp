@@ -1,6 +1,6 @@
 #include "DauSach.cpp"
 
-char MENU_DOCGIA[7][30] 		= {"1.Them    ","2.Xoa     ","3. Sua         ","4.Them item theo vi tri     ","5.Xem DS     ","6.Luu tep     ", "7.Tim doc gia      " };
+char MENU_DOCGIA[7][30] 		= {"1.Them    ","2.Nhap Sach     ","3. Sua         ","4.Xem thong tin sach     ","5.Xem DS     ","6.Luu tep     ", "7.Tim doc gia      " };
 
 enum TrangThaiMT {
 	DANGMUON = 0,
@@ -232,7 +232,88 @@ void xoaDauMT(LISTMT &ls) {
 
 }
 
+void NhapMTvoiMaSach(LISTMT &ls, LISTDS &listDS) {
+	int c;
+	int vitri;
+	int endchar;
+	char *trangThai;
+	NGAY_THANG ngaymuon;
+	NGAY_THANG ngaytra;
+	int vitriDMSTrongDS;
+	char *tenSachCanTim;
+	char *maSachHopLe;
+	NodeDMS_PTR pNODEdanhmucsach;
+	
+	while(true) {
+		DanhSachMuonTra item;
+		if (demSoSachDangMuon(ls) == 3) {
+			printf("\nDoc gia da muon toi da so luong cho phep!\n Nhan phim bat ky de thoat!");
+			getch();
+			break;
+		}
+		
+	NHAPTENSACH:
+			printf("\nNhap ten sach: ");
+			tenSachCanTim = InputType(200,endchar,1);
+			uppercaseChar(tenSachCanTim);
+			maSachHopLe = MaSachDuocPhepMuon(listDS,tenSachCanTim);
+			if (strcmp(tenSachCanTim,"0") == 0) {
+				break;
+			}
+			
+			if (strlen(maSachHopLe) == 0) {
+				printf("\nKhong co sach: %s",tenSachCanTim);
+				goto NHAPTENSACH;
+			}
+					
+			if (ls.mtFirst == NULL) {
+				khoiTaoDSMUONTRA(ls);
+	
+			}
+			
+	
+	NHAPMA:
+		uppercaseChar(maSachHopLe);
+		strcpy(item.MaSach,maSachHopLe);
+		printf("\nMa sach: %s",item.MaSach);
+		vitriDMSTrongDS = KiemTraMaSachTraVeViTri(listDS, maSachHopLe);
 
+	NHAPNGAYMUON:
+		LayNgayGioHT(ngaymuon);
+		printf("\nNhap ngay muon (dd/MM/yyyy):%d /%d /%d", ngaymuon.ngay,ngaymuon.thang,ngaymuon.nam);
+		item.NgayMuon = ngaymuon;
+
+	NHAPNGAYTRA:
+		printf("\nNhap ngay tra (dd/MM/yyyy):");
+		int check1 = NhapNgayThang(ngaytra,wherex(),wherey());
+		if (SoSanhNgay(ngaymuon, ngaytra) < 0) {
+			goto NHAPNGAYTRA;
+
+		}
+		item.NgayTra = ngaytra;
+		
+	NHAPTT:
+		printf("\nTrang thai sach(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");
+		trangThai= InputType(1,endchar,2);
+		int _trangThai = atoi(trangThai);	
+		
+		if(strlen(trangThai)==0){
+			printf("Trang Thai khong duoc rong");
+			goto NHAPTT;
+		}
+		if(_trangThai<0 || _trangThai>2)
+		{
+			printf("Xin nhap 0 hoac 1 hoac 2");
+			goto NHAPTT;
+		}
+		item.trangthaiMT = _trangThai;
+		
+		themCuoi(ls,item);
+		if (item.trangthaiMT == 0 && vitriDMSTrongDS != -1) {
+			capnhatTrangThai(listDS.nodeDS[vitriDMSTrongDS]->dms,maSachHopLe,1);
+		}
+	};	
+}
 
 
 void NhapMT(LISTMT &ls, LISTDS &listDS) {
@@ -292,20 +373,21 @@ void NhapMT(LISTMT &ls, LISTDS &listDS) {
 		int _trangThai = atoi(trangThai);	
 		
 		if(strlen(trangThai)==0){
-			printf("Trang Thai khong duoc rong");
+			printf("\nTrang Thai khong duoc rong");
 			goto NHAPTT;
 		}
 		if(_trangThai<0 || _trangThai>2)
 		{
-			printf("Xin nhap 0 hoac 1 hoac 2");
+			printf("\nXin nhap 0 hoac 1 hoac 2");
 			goto NHAPTT;
 		}
 		item.trangthaiMT = _trangThai;
 		
 
 		
-		themDau(ls,item);
+		themCuoi(ls,item);
 		if (item.trangthaiMT == 0 && vitriDMSTrongDS != -1) {
+			printf("%s",maSach);
 			capnhatTrangThai(listDS.nodeDS[vitriDMSTrongDS]->dms,maSach,1);
 
 		}

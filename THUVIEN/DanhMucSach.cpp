@@ -78,6 +78,16 @@ int checkMaDMS(LISTDMS ls, char *masach){
 
 }
 
+char *MaSachHopLe(LISTDMS ls){
+	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
+		if (p->dms.trangthaiDMS == 0){
+			return p->dms.MaSach;
+		}
+	}
+	return "Sach nay da het!";
+
+}
+
 NodeDMS_PTR pNodeDMS(LISTDMS listDMS, char *masach){
 	for(NodeDMS_PTR p = listDMS.dmsFirst; p != NULL; p = p->dmsNext) {
 		if (strcmp(p->dms.MaSach, masach) == 0){
