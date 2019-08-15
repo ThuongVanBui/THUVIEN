@@ -98,6 +98,21 @@ NodeDMS_PTR pNodeDMS(LISTDMS listDMS, char *masach){
 
 }
 
+int capNhatTrangThaiSach(LISTDMS &listDMS, int trangThai, char * MaSach) {
+	int trangThaiDMS = (trangThai == 1) ? 0 : 2;
+	
+	
+	for(NodeDMS_PTR p = listDMS.dmsFirst; p != NULL; p = p->dmsNext) {
+		if (strcmp(p->dms.MaSach, MaSach) == 0){
+			p->dms.trangthaiDMS = trangThaiDMS;
+			printf("%s",stringTrangThaiDMS(p->dms.trangthaiDMS));
+			return 1;
+		}
+	}
+	
+	return 0;
+}
+
 void themDau(LISTDMS &lsDMS, DanhMucSach dms) {
 	NodeDMS_PTR p;
 	p = NewNode_DMS(dms);

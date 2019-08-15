@@ -50,14 +50,36 @@ NodeMT_PTR newNodeMT(DanhSachMuonTra mt) {
 	return p;
 }
 
-int checkMaDMS(LISTMT ls, char *masach){
+int checkMaDMS_DSMT(LISTMT ls, char *masach){
 	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
-		if (strcmp(p->DSMT.MaSach, masach) == 0){
+		if (strcmp(p->DSMT.MaSach, masach) == 0 && p->DSMT.trangthaiMT == 0){
 			return 1;
-		}else{
-			return 0;
+		}
+		
+	}
+		return 0;
+
+}
+
+int TraSach_DSMT(LISTMT &ls, LISTDS &LISTDauSach, char *masach, int trangthai){
+	NGAY_THANG ntHT;
+	LayNgayGioHT(ntHT);
+	int vitriSach = KiemTraMaSachTraVeViTri(LISTDauSach,masach);
+	
+	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
+		if (strcmp(p->DSMT.MaSach, masach) == 0) {
+			p->DSMT.trangthaiMT = trangthai;
+			p->DSMT.NgayTra = ntHT;
+			if (vitriSach > -1) {
+				if (capNhatTrangThaiSach(LISTDauSach.nodeDS[vitriSach]->dms,trangthai,masach) == 1) {
+					return 1;
+				}
+			
+			}
+			
 		}
 	}
+	return 0;
 }
 
 
@@ -88,7 +110,7 @@ int demSoSachDangMuon(LISTMT ls){
 int sachQuaHan7Ngay(LISTMT ls) {
 	
 	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
-		if (KhoangCachNgay(p->DSMT.NgayTra) == 7) {
+		if (KhoangCachNgay(p->DSMT.NgayMuon) == 7) {
 			return 1;
 		} else {
 			return 0;
@@ -311,6 +333,7 @@ void NhapMTvoiMaSach(LISTMT &ls, LISTDS &listDS) {
 		themCuoi(ls,item);
 		if (item.trangthaiMT == 0 && vitriDMSTrongDS != -1) {
 			capnhatTrangThai(listDS.nodeDS[vitriDMSTrongDS]->dms,maSachHopLe,1);
+			listDS.nodeDS[vitriDMSTrongDS]->solanmuon += 1;
 		}
 	};	
 }
@@ -395,25 +418,39 @@ void NhapMT(LISTMT &ls, LISTDS &listDS) {
 }
 
 
-void XuatDSMT(LISTMT ls) {
+void XuatDSMT(LISTMT ls, int x, int y) {
+	int y2 = y;
+	gotoxy(x,y2);
+	printf("Ma sach");
+	gotoxy(x+20,y2);
+	printf("Trang thai");
+	gotoxy(x+40,y2);
+	printf("Ngay muon");
+	gotoxy(x+60,y2);
+	printf("Ngay tra");
+	
 	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
-		printf("\nMa sach: %s", p->DSMT.MaSach);
+		y2+=1;
+		gotoxy(x,y2);
+		printf("%s",p->DSMT.MaSach);
+		gotoxy(x+20,y2);
 		switch (p->DSMT.trangthaiMT) {
 			case DANGMUON:
-				printf("\nTrang thai: Dang muon");
+				printf("Dang muon");
 				break;
 			case DATRA:
-				printf("\nTrang thai: Da tra");
+				printf("Da tra");
 				break;
 
 			case LAMMAT:
-				printf("\nTrang thai: Lat mat");
+				printf("Lat mat");
 				break;
 
 		}
-		printf("\nNgay muon: %d /%d /%d", p->DSMT.NgayMuon.ngay,p->DSMT.NgayMuon.thang,p->DSMT.NgayMuon.nam);
-		printf("\nNgay tra: %d /%d /%d", p->DSMT.NgayTra.ngay,p->DSMT.NgayTra.thang,p->DSMT.NgayTra.nam);
-		printf("\n");
+		gotoxy(x+40,y2);
+		printf("%d /%d /%d", p->DSMT.NgayMuon.ngay,p->DSMT.NgayMuon.thang,p->DSMT.NgayMuon.nam);
+		gotoxy(x+60,y2);
+		printf("%d /%d /%d", p->DSMT.NgayTra.ngay,p->DSMT.NgayTra.thang,p->DSMT.NgayTra.nam);
 	}
 }
 
@@ -515,12 +552,12 @@ void HienThiMenu(LISTMT &ls) {
 	    	printf("\n");
 //	    	_NhapSachTheoViTri(ls);
 	    	printf("\n");
-	    	XuatDSMT(ls);
+	    	XuatDSMT(ls,0,0);
 	    	getch(); 
 	        break;
 	    case 4:
 			printf("\n");
-			XuatDSMT(ls); 
+			XuatDSMT(ls,0,0); 
 			getch();
 	         break;
 	    case 5:

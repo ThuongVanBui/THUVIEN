@@ -8,7 +8,7 @@
 #include <ctype.h>
 #include <iostream>
 #include "Marcro.h"
-#define EQUAL               0
+#define EQUAL 0
 
 using namespace std;
 #define Enter 13
@@ -288,14 +288,14 @@ int tinhNgay(NGAY_THANG dt)
 		dt.nam--;
 		dt.thang += 12;
 	}
-	return 365 * dt.nam + dt.nam / 4 - dt.nam / 10 + dt.nam / 400 + (153 * dt.thang - 457) / 5 + dt.ngay - 306;
+    return 365*dt.nam + dt.nam/4 - dt.nam/100 + dt.nam/400 + (153*dt.thang - 457)/5 + dt.ngay - 306;
 }
 
 int KhoangCachNgay(NGAY_THANG nt1)
 {
 	NGAY_THANG nt2;
 	LayNgayGioHT(nt2);
-	return ( tinhNgay(nt1) - tinhNgay(nt2));
+	return (tinhNgay(nt2) - tinhNgay(nt1));
 }
 
 int SoSanhNgay(NGAY_THANG nt1, NGAY_THANG nt2)
