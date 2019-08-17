@@ -1,6 +1,6 @@
 #include "DauSach.cpp"
 
-char MENU_DOCGIA[7][30] 		= {"1.Them    ","2.Nhap Sach     ","3. Sua         ","4.Xem thong tin sach     ","5.Xem DS     ","6.Luu tep     ", "7.Tim doc gia      " };
+char MENU_DOCGIA[7][30] 		= {"1.Them    ","2.Nhap Sach     ","3. Sua         ","4.Xem thong tin sach     ","5.Quan Ly Doc Gia     ","6.Luu Thong Tin Vao File     ", "7.Quan Ly Muon Tra      " };
 
 enum TrangThaiMT {
 	DANGMUON = 0,
@@ -279,6 +279,9 @@ void NhapMTvoiMaSach(LISTMT &ls, LISTDS &listDS) {
 			tenSachCanTim = InputType(200,endchar,1);
 			uppercaseChar(tenSachCanTim);
 			maSachHopLe = MaSachDuocPhepMuon(listDS,tenSachCanTim);
+			if (endchar == ESC) {
+				break;	
+			}
 			if (strcmp(tenSachCanTim,"0") == 0) {
 				break;
 			}
@@ -315,20 +318,9 @@ void NhapMTvoiMaSach(LISTMT &ls, LISTDS &listDS) {
 		item.NgayTra = ngaytra;
 		
 	NHAPTT:
-		printf("\nTrang thai sach(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): ");
-		trangThai= InputType(1,endchar,2);
-		int _trangThai = atoi(trangThai);	
-		
-		if(strlen(trangThai)==0){
-			printf("Trang Thai khong duoc rong");
-			goto NHAPTT;
-		}
-		if(_trangThai<0 || _trangThai>2)
-		{
-			printf("Xin nhap 0 hoac 1 hoac 2");
-			goto NHAPTT;
-		}
-		item.trangthaiMT = _trangThai;
+		printf("\nTrang thai sach(0:Duoc Muon, 1:Da Duoc Muon, 2:Da Thanh Ly): 0: Duoc muon ");
+	
+		item.trangthaiMT = 0;
 		
 		themCuoi(ls,item);
 		if (item.trangthaiMT == 0 && vitriDMSTrongDS != -1) {
