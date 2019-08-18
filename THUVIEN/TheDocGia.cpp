@@ -15,7 +15,7 @@ enum Phai {
 	Nu = 1
 };
 
-typedef int (*comparer)(int, int);
+//typedef int (*comparer)(int, int);
 
 int index = 0;
 
@@ -1102,14 +1102,11 @@ void HienThiMenuDocGia(tree &ls, LISTDS &lsDauSach) {
 
 	 	switch (choice) {
 	    case 1: 
-
-				
+				HienThiMenuDauSach(lsDauSach);
 				break;
-	    case 2:	printf("\nNhap Dau Sach\n"); 
+	    case 2:	
+				printf("\nNhap Dau Sach\n"); 
 				NhapThemDauSach(lsDauSach);
-
-			//	HienThiMenuDauSach(lsDauSach);
-
 	          break;
 	    case 3:
 	    //	MenuXoaDMS(ls);
@@ -1169,20 +1166,23 @@ void HienThiMenuDocGia(tree &ls, LISTDS &lsDauSach) {
 }
 
 int main() {
-	tree ls;
-	LISTDS lsDauSach;
-	KhoiTaoDocGia(ls);
-	docFileDSDG(ls);
 	RECT r;
 	HWND console = GetConsoleWindow();
 	GetWindowRect(console, &r); //stores the console's current dimensions
 	MoveWindow(console, r.left, r.top, 1400, 800, TRUE);
+	
+//Doc gia
+	tree ls;
+	LISTDS lsDauSach;
+	KhoiTaoDocGia(ls);
+	docFileDSDG(ls);
 
 	
 //Dau Sach
 	khoitaoDauSach(lsDauSach);
 	DocDauSach(lsDauSach,"rb","dausach2.bin");
-	
+
+//Quan ly thu vien
 	HienThiMenuDocGia(ls,lsDauSach);
 
 }

@@ -263,14 +263,35 @@ NodeDMS_PTR KiemTraMaSach(LISTDS listDauSach, char *masach) {
 
 void XuatThongTinDauSach(pDAUSACH pDS) {
 	clrscr();
-	printf("\nMa ISBN: %s\n",pDS->ISBN);
-	printf("Ten sach: %s\n",pDS->TenSach);
-	printf("Tac gia: %s\n",pDS->TacGia);
-	printf("The loai: %s\n",stringtheloai(kieutheloai(pDS->TheLoai)));
-	printf("So Trang: %d\n",pDS->SoTrang);
-	printf("Nam xuat ban: %d\n",pDS->NamXuatBan);
-	printf("\n\n==> DANH MUC SACH <==\n\n");
-	XuatDMS(pDS->dms);
+		gotoxy(10,3);
+		printf("Ma ISBN");
+		gotoxy(20,3);
+		printf("Ten sach");
+		gotoxy(40,3);
+		printf("Tac gia");
+		gotoxy(60,3);
+		printf("The loai");
+		gotoxy(90,3);
+		printf("So Trang");
+		gotoxy(100,3);
+		printf("Nam xuat ban");
+		gotoxy(10,4);
+	int y = 5;
+		gotoxy(10,y);
+			printf("%s",pDS->ISBN);
+		gotoxy(20,y);
+			printf("%s",pDS->TenSach);
+		gotoxy(40,y);
+			printf("%s",pDS->TacGia);
+		gotoxy(60,y);
+			printf("%s",stringtheloai(kieutheloai(pDS->TheLoai)));
+		gotoxy(90,y);
+			printf("%d",pDS->SoTrang);
+		gotoxy(100,y);
+			printf("%d",pDS->NamXuatBan);
+	gotoxy(30,y+2);
+	printf("==> DANH MUC SACH <==");
+	XuatDMS_Returny(pDS->dms, y+5);
 	
 }
 
@@ -289,18 +310,43 @@ void XuatDauSach(LISTDS ls) {
 	}
 }
 
-void XuatDauSachTheoTheLoai(LISTDS ls) {
+void XuatDauSachTheoTheLoai(LISTDS ls, char *theloai) {
 	clrscr();
+	if (strlen(theloai) != 0) {
+		gotoxy(50,1);
+		printf("Nhung sach thuoc the loai: %s", theloai);
+	}
+
+		gotoxy(10,3);
+		printf("Ma ISBN");
+		gotoxy(20,3);
+		printf("Ten sach");
+		gotoxy(40,3);
+		printf("Tac gia");
+		gotoxy(60,3);
+		printf("The loai");
+		gotoxy(90,3);
+		printf("So Trang");
+		gotoxy(100,3);
+		printf("Nam xuat ban");
+		gotoxy(10,4);
+	int y = 5;
 	for (int i = 0; i <= ls.soluong; i++) {
-			printf("\nMa ISBN: %s\n",ls.nodeDS[i]->ISBN);
-			printf("Ten sach: %s\n",ls.nodeDS[i]->TenSach);
-			printf("Tac gia: %s\n",ls.nodeDS[i]->TacGia);
-			printf("The loai: %s\n",stringtheloai(kieutheloai(ls.nodeDS[i]->TheLoai)));
-			printf("So Trang: %d\n",ls.nodeDS[i]->SoTrang);
-			printf("Nam xuat ban: %d\n",ls.nodeDS[i]->NamXuatBan);
+		gotoxy(10,y);
+			printf("%s",ls.nodeDS[i]->ISBN);
+		gotoxy(20,y);
+			printf("%s",ls.nodeDS[i]->TenSach);
+		gotoxy(40,y);
+			printf("%s",ls.nodeDS[i]->TacGia);
+		gotoxy(60,y);
+			printf("%s",stringtheloai(kieutheloai(ls.nodeDS[i]->TheLoai)));
+		gotoxy(90,y);
+			printf("%d",ls.nodeDS[i]->SoTrang);
+		gotoxy(100,y);
+			printf("%d",ls.nodeDS[i]->NamXuatBan);
 //			printf("\n\n==> DANH MUC SACH <==\n\n");
 //			XuatDMS(ls.nodeDS[i]->dms);
-
+		y+=1;
 	}
 }
 
@@ -335,8 +381,8 @@ void NhapThemDauSach(LISTDS &ls) {
 	
 
 		
-	while(true){
-
+	do{
+		clrscr();
 		ds = new DAUSACH;
 		
 	NHAPISBN:
@@ -344,10 +390,10 @@ void NhapThemDauSach(LISTDS &ls) {
 		_isbn = InputType(6,endchar,1);
 		strcpy(_isbn,removeSpaces(_isbn));
 		uppercaseChar(_isbn);
-
 		if (endchar == ESC) {
 			break;
 		}
+		
 		if (strlen(_isbn) == 0) {
 			printf("Ma ISBN khong duoc rong!\n");
 			goto NHAPISBN;
@@ -439,7 +485,6 @@ void NhapThemDauSach(LISTDS &ls) {
 		
 		//cap nhat dau sach
 			strcpy(ds->ISBN, _isbn);
-			
 			uppercaseChar(tenSach);
 			strcpy(ds->TenSach, tenSach);
 			
@@ -480,7 +525,7 @@ void NhapThemDauSach(LISTDS &ls) {
 		
 		ls.nodeDS[ls.soluong] = ds;
 	
-	}
+	} while(endchar != ESC);
 		
 }
 
@@ -616,6 +661,7 @@ void DocDauSach(LISTDS &lsDS,char *mode,char *tenfile){
 }
 
 void HienThiMenuDauSach(LISTDS &ls) {
+	clrscr();
 	int choice;
 	int endchar;
 	char *s;
@@ -628,7 +674,7 @@ void HienThiMenuDauSach(LISTDS &ls) {
 		for (int i = 0; i < 7; i++) {
 			printf(MENU_DAUSACH[i]);
 		}
-	
+		printf("\nNhap chuc nang:");
 	 	choice = atoi(InputType(1,endchar,2));
 
 	 	switch (choice) {
@@ -652,7 +698,7 @@ void HienThiMenuDauSach(LISTDS &ls) {
 	    	printf("\n\n%s",stringtheloai(kieutheloai(_theloai)));
 			lsTL = taoDStheoTL(ls,_theloai);
 			quickSortDAUSACH(lsTL,0,lsTL.soluong);
-	    	XuatDauSachTheoTheLoai(lsTL);
+	    	XuatDauSachTheoTheLoai(lsTL,stringtheloai(kieutheloai(_theloai)));
 	    	getch();
 	    	break;
 	    case 5:
@@ -685,9 +731,10 @@ void HienThiMenuDauSach(LISTDS &ls) {
 			break;
 		case 7:
 			printf("Dang sap xep....");
+			Sleep(500);
 			if (ls.soluong != -1){
 				quickSortDAUSACH(ls,0,ls.soluong);
-				XuatDauSachTheoTheLoai(ls);
+				XuatDauSachTheoTheLoai(ls,"");
 			}
 
 			getch();

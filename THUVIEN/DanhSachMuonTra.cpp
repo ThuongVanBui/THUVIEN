@@ -1,6 +1,6 @@
 #include "DauSach.cpp"
 
-char MENU_DOCGIA[7][30] 		= {"1.Them    ","2.Nhap Sach     ","3. Sua         ","4.Xem thong tin sach     ","5.Quan Ly Doc Gia     ","6.Luu Thong Tin Vao File     ", "7.Quan Ly Muon Tra      " };
+char MENU_DOCGIA[7][30] 		= {"1.Quan ly sach    ","2.Nhap Sach     ","3. Sua         ","4.Xem thong tin sach     ","5.Quan Ly Doc Gia     ","6.Luu Thong Tin Vao File     ", "7.Quan Ly Muon Tra      " };
 
 enum TrangThaiMT {
 	DANGMUON = 0,
@@ -407,6 +407,44 @@ void NhapMT(LISTMT &ls, LISTDS &listDS) {
 
 		}
 	};	
+}
+
+void XuatCacSachDGMuon(LISTMT mt, LISTDS ds, int _y){
+	int vitriSach;
+	char *ISBN;
+	gotoxy(10,_y);
+	printf("Ma ISBN");
+	gotoxy(20,_y);
+	printf("Ten sach");
+	gotoxy(40,_y);
+	printf("Tac gia");
+	gotoxy(60,_y);
+	printf("The loai");
+	gotoxy(90,_y);
+	printf("So Trang");
+	gotoxy(100,_y);
+	printf("Nam xuat ban");
+	gotoxy(10,_y+1);
+	int y = _y+2;
+
+	for(NodeMT_PTR p = mt.mtFirst; p != NULL; p = p->mtRight) {
+		vitriSach = KiemTraMaSachTraVeViTri(ds,p->DSMT.MaSach);
+		if (p->DSMT.trangthaiMT == 0 && vitriSach != -1 && strcmp(ds.nodeDS[vitriSach]->ISBN,ISBN) != 0){
+			ISBN = ds.nodeDS[vitriSach]->ISBN;
+				gotoxy(10,y);
+					printf("%s",ds.nodeDS[vitriSach]->ISBN);
+				gotoxy(20,y);
+					printf("%s",ds.nodeDS[vitriSach]->TenSach);
+				gotoxy(40,y);
+					printf("%s",ds.nodeDS[vitriSach]->TacGia);
+				gotoxy(60,y);
+					printf("%s",stringtheloai(kieutheloai(ds.nodeDS[vitriSach]->TheLoai)));
+				gotoxy(90,y);
+					printf("%d",ds.nodeDS[vitriSach]->SoTrang);
+				gotoxy(100,y);
+					printf("%d",ds.nodeDS[vitriSach]->NamXuatBan);
+		}
+	}
 }
 
 

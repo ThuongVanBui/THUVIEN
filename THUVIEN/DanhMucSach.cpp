@@ -12,11 +12,11 @@ enum TrangThaiDMS {
 char *stringTrangThaiDMS (int trangThai) {
 	switch(trangThai){
 		case 0:
-			return "Duoc muon    ";
+			return "DUOC MUON   ";
 		case 1:
-			return "Da Duoc Muon ";	
+			return "DA DUOC MUON";	
 		case 2:
-			return "Da Thanh Ly  ";	
+			return "DA THANH LY ";	
 	};
 	
 	
@@ -309,6 +309,43 @@ void XuatDMS(LISTDMS ls) {
 		}
 		printf("\nVi tri: %s\n", p->dms.ViTri);
 	}
+}
+
+
+
+int XuatDMS_Returny(LISTDMS ls, int y) {
+	gotoxy(20,y);
+		printf("Ma sach");
+	gotoxy(40,y);
+		printf("Trang thai");
+	gotoxy(60,y);
+		printf("Vi tri");
+	int _y = y+3;
+	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
+	gotoxy(20,_y);
+
+		printf("%s", p->dms.MaSach);
+	gotoxy(40,_y);
+
+		switch (p->dms.trangthaiDMS) {
+			case DUOCMUON:
+				printf("DUOC MUON");
+				break;
+			case DADUOCMUON:
+				printf("DA DUOC MUON");
+				break;
+
+			case DATHANHLY:
+				printf("DA THANH LY");
+				break;
+
+		}
+	gotoxy(60,_y);
+
+		printf("%s", p->dms.ViTri);
+		_y+=1;
+	}
+	return _y;
 }
 
 
