@@ -78,6 +78,16 @@ int checkMaDMS(LISTDMS ls, char *masach){
 
 }
 
+int checkTrangThaiDMS(LISTDMS ls, char *masach){
+	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
+		if (strcmp(p->dms.MaSach, masach) == 0){
+			return p->dms.trangthaiDMS;
+		}
+	}
+	return -1;
+
+}
+
 char *MaSachHopLe(LISTDMS ls){
 	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
 		if (p->dms.trangthaiDMS == 0){
@@ -161,7 +171,7 @@ void xoaCuoi(LISTDMS &lsDMS){
 		lsDMS.dmsFirst=lsDMS.dmsLast=NULL;
 		return;
 	}
-	for(NodeDMS_PTR  p=lsDMS.dmsFirst;p!=NULL;p=p->dmsNext){
+	for(NodeDMS_PTR  p = lsDMS.dmsFirst; p!=NULL;p=p->dmsNext){
 		if(strcmp(p->dmsNext->dms.MaSach,lsDMS.dmsLast->dms.MaSach)==0){
 			NodeDMS_PTR _delete  = p->dmsNext;
 			delete _delete;
@@ -309,6 +319,17 @@ void XuatDMS(LISTDMS ls) {
 		}
 		printf("\nVi tri: %s\n", p->dms.ViTri);
 	}
+}
+
+int demsoDMSdangduocmuon(LISTDMS ls) {
+	int i = 0;
+	for(NodeDMS_PTR p = ls.dmsFirst; p != NULL; p = p->dmsNext) {
+		if(p->dms.trangthaiDMS == 1) {
+			i+=1;
+		}
+	}
+	
+	return i;
 }
 
 

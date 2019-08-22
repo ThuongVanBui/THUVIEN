@@ -1,7 +1,13 @@
 #include"DanhMucSach.cpp">
 #define MAXLIST 500
 
-char MENU_DAUSACH[7][30] 		= {"1.Them    ","2.Sua dau sach", "3.Xoa dau sach", "4.Xem theo the loai     ","5.Luu tep     ","6.Tim sach     ","7.Sap xep danh sach       " };
+char MENU_DAUSACH[7][30] 		= {"1.Them dau sach",
+									"2.Sua dau sach	", 
+									"3.Xoa dau sach	", 
+									"4.Xem theo the loai",
+									"5.Luu tep",
+									"6.Tim sach ",
+									"7.Sap xep danh sach " };
 
 
 enum ENUMTHELOAI {
@@ -94,7 +100,7 @@ char *stringtheloai (ENUMTHELOAI theloai) {
 }
 
 struct DauSach {
-	char ISBN[8];
+	char ISBN[7];
 	char TenSach[201];
 	int SoTrang;
 	char TacGia[101];
@@ -116,12 +122,7 @@ struct listDAUSACH {
 };
 typedef struct listDAUSACH LISTDS;
 
-int randomsMADS() {
-	int lower = 100000, upper = 999999;
-	srand(time(0)); 
-	return (rand() % (upper - lower + 1)) + lower; 
-	
-}
+
 
 //khoi tao dau sach
 void khoitaoDauSach(LISTDS &ls) {
@@ -135,7 +136,7 @@ int dauSachRong (LISTDS ls) {
 
 //kiem tra danh sach day
 int dauSachDay(LISTDS ls) {
-	return ls.soluong == (MAXLIST - 1) ? 1 : 0;
+	return ls.soluong == MAXLIST ? 1 : 0;
 }
 
 int kiemTraMaISBN(LISTDS ls, char *maISBN) {
@@ -201,26 +202,19 @@ void quickSortDAUSACH(LISTDS &ls, int left, int right) {
 
 void soSachTrungTen(LISTDS ls, char *tenSachCanTim, LISTDS &newLISTDS) {
 	khoitaoDauSach(newLISTDS);  
-	int first = 0;  
+	int i = 0;  
     int last = ls.soluong;
-    int middle;
     int cmpval;
 
-    while(first <= last) {
-//        middle = (first + last) / 2;
-        cmpval = strcmp(tenSachCanTim, ls.nodeDS[first]->TenSach);
+    while(i <= last) {
+        cmpval = strcmp(tenSachCanTim, ls.nodeDS[i]->TenSach);
         if(cmpval == 0){
         	newLISTDS.soluong++;
-            newLISTDS.nodeDS[newLISTDS.soluong] = ls.nodeDS[first];
+            newLISTDS.nodeDS[newLISTDS.soluong] = ls.nodeDS[i];
             printf("%s",newLISTDS.nodeDS[newLISTDS.soluong]->ISBN);
 		}
-		first+=1;
-//        else if(cmpval < 0) {
-//            last = middle - 1;
-//        }
-//        else{
-//            first = middle + 1;
-//        }
+		i+=1;
+
     }
 
 }
@@ -251,7 +245,6 @@ pDAUSACH timkiemDauSachTuanTuTheoTen(LISTDS ls,char *tenSachCanTim) {
         {   
 	        if (strcmp(tenSachCanTim,ls.nodeDS[l]->TenSach) == 0) {
 					return ls.nodeDS[l]; 
-	                
 	        }
 	        l++;
 		}
@@ -352,13 +345,13 @@ void XuatDauSachTheoTheLoai(LISTDS ls, char *theloai) {
 		printf("Ma ISBN");
 		gotoxy(20,3);
 		printf("Ten sach");
-		gotoxy(40,3);
+		gotoxy(50,3);
 		printf("Tac gia");
-		gotoxy(60,3);
+		gotoxy(70,3);
 		printf("The loai");
-		gotoxy(90,3);
-		printf("So Trang");
 		gotoxy(100,3);
+		printf("So Trang");
+		gotoxy(110,3);
 		printf("Nam xuat ban");
 		gotoxy(10,4);
 	int y = 5;
@@ -367,13 +360,13 @@ void XuatDauSachTheoTheLoai(LISTDS ls, char *theloai) {
 			printf("%s",ls.nodeDS[i]->ISBN);
 		gotoxy(20,y);
 			printf("%s",ls.nodeDS[i]->TenSach);
-		gotoxy(40,y);
+		gotoxy(50,y);
 			printf("%s",ls.nodeDS[i]->TacGia);
-		gotoxy(60,y);
+		gotoxy(70,y);
 			printf("%s",stringtheloai(kieutheloai(ls.nodeDS[i]->TheLoai)));
-		gotoxy(90,y);
-			printf("%d",ls.nodeDS[i]->SoTrang);
 		gotoxy(100,y);
+			printf("%d",ls.nodeDS[i]->SoTrang);
+		gotoxy(110,y);
 			printf("%d",ls.nodeDS[i]->NamXuatBan);
 //			printf("\n\n==> DANH MUC SACH <==\n\n");
 //			XuatDMS(ls.nodeDS[i]->dms);
@@ -389,6 +382,153 @@ char *MaSachDuocPhepMuon(LISTDS ls, char *tenSachCanTim) {
 	}
 	return "";
 }
+
+void NhapSuaDauSach(LISTDS &ls, char *ISBN, int pos) {
+
+	//dau sach
+	DAUSACH *ds;
+	
+	int endchar;
+	char *_isbn;
+	
+	char *tenTG;
+	int sotrang;
+	int namXB;
+	int theloai;
+	char *tl;
+	char *tenSach;
+	
+	
+	//Danh Muc Sach
+	int soLuong;
+	char *viTri;
+	
+
+		
+		clrscr();
+		ds = new DAUSACH;
+		
+	NHAPISBN:
+		uppercaseChar(ISBN);
+		printf("\nMa ISBN:%s", ISBN);
+
+	NHAPTENSACH:
+		printf("\nNhap ten sach:");
+		tenSach = InputType(200,endchar,1);
+		if (strlen(tenSach) == 0) {
+			printf("Ten sach khong duoc rong!\n");
+			goto NHAPTENSACH;
+
+		}
+		if (endchar == ESC) {
+			return;
+		}
+
+	NHAPSOTRANG:
+		printf("\nNhap so trang:");
+		sotrang = atoi(InputType(10,endchar,2));
+		if (sotrang == 0) {
+			printf("So trang phai khac 0!\n");
+			goto NHAPSOTRANG;
+
+		}
+		if (endchar == ESC) {
+			return;
+		}		
+	NHAPTACGIA:
+		printf("\nNhap tac gia:");
+		tenTG = InputType(100,endchar,3);
+		if (strlen(tenTG) == 0) {
+			printf("Ten tac gia khong duoc bo trong!\n");
+			goto NHAPTACGIA;
+
+		}
+		if (endchar == ESC) {
+			return;
+		}
+		
+	NHAPNAMXUATBAN:
+		printf("\nNhap nam xuat ban:");
+		namXB = atoi(InputType(4,endchar,2));
+		if (namXB == 0) {
+			printf("Nam san xuat khong duoc bo trong!\n");
+			goto NHAPNAMXUATBAN;
+
+		}
+		
+		if (namXB > LayNamHT()) {
+			printf("Nam san xuat khong duoc lon hon nam hien tai!\n");
+			goto NHAPNAMXUATBAN;		
+		}
+		if (endchar == ESC) {
+			return;
+		}
+	
+	NHAPTHELOAI:
+		xuatTheLoai(200,200);
+		printf("\nNhap the loai:");
+		tl = (InputType(1,endchar,2));
+		theloai = atoi(tl);
+		if (strcmp(tl,"") == 0){
+			printf("The loai khong duoc bo trong!");
+			goto NHAPTHELOAI;
+		}
+		if (theloai < 0 || theloai > 8) {
+			printf("The loai khong ton tai!\n");
+			goto NHAPTHELOAI;
+
+		}  
+		if (endchar == ESC) {
+			return;
+		}
+		printf(":%s",stringtheloai(kieutheloai(theloai)));
+	
+		
+		//cap nhat dau sach
+		strcpy(ds->ISBN, ISBN);
+		uppercaseChar(tenSach);
+		strcpy(ds->TenSach, tenSach);
+		
+		uppercaseChar(tenTG);
+		strcpy(ds->TacGia, tenTG);	
+		
+		ds->SoTrang = sotrang ;			
+		ds->NamXuatBan = namXB;		
+
+		ds->TheLoai = theloai;
+		
+	//Danh muc sach
+		printf("\n\n==> NHAP DANH MUC SACH <==\n\n");
+		khoiTaoDMS(ds->dms);
+	NHAPSOLUONG:
+		printf("\nNhap so luong tai ban:");
+		soLuong = atoi(InputType(5,endchar,2));
+		if (soLuong == 0) {
+			printf("\nSo luong phai khac 0!");
+			goto NHAPSOLUONG;
+		}
+	NHAPVITRILUUTRU:	
+		printf("\nNhap vi tri luu tru:");
+		viTri = InputType(200,endchar,1);
+		if (strcmp(viTri,"") == 0) {
+			printf("\nVi tri luu tru khong duoc bo trong!");
+			goto NHAPVITRILUUTRU;
+		}
+		uppercaseChar(viTri);
+		NhapVitriSLDMS(ds->dms,ds->ISBN, viTri, 0, soLuong);
+	
+	//cap nhat danh sach		
+		if (dauSachDay(ls) == 1) {
+			printf("Danh sach da day!");
+			return;
+		}
+
+		ls.nodeDS[pos] = ds;
+		
+
+		
+}
+
 
 void NhapThemDauSach(LISTDS &ls) {
 
@@ -550,6 +690,7 @@ void NhapThemDauSach(LISTDS &ls) {
 	//cap nhat danh sach		
 		if (dauSachDay(ls) == 1) {
 			printf("Danh sach da day!");
+			getch();
 			break;
 		}		
 		ls.soluong++;
@@ -560,44 +701,16 @@ void NhapThemDauSach(LISTDS &ls) {
 		
 }
 
-
-//void XuatDauSach(LISTDS ls) {
-//	
-//	for (int i = 0; i <= ls.soluong; i++) {
-//		printf("\nMa ISBN: %s\n",ls.nodeDS[i]->ISBN);
-//		printf("Ten sach: %s\n",ls.nodeDS[i]->TenSach);
-//		printf("Tac gia: %s\n",ls.nodeDS[i]->TacGia);
-//		printf("The loai: %s\n",ls.nodeDS[i]->TheLoai);
-//		printf("So Trang: %d\n",ls.nodeDS[i]->SoTrang);
-//		printf("Nam xuat ban: %d\n",ls.nodeDS[i]->NamXuatBan);
-//		printf("\n\n==> DANH MUC SACH <==\n\n");
-//		XuatDMS(ls.nodeDS[i]->dms);
-//}
-//}
-//void docFileDAUSACH(LISTDS &ls) {
-//	clrscr();
-//	pDAUSACH ds ;
-//	int i = 0;
-//	FILE *f;
-//	 if ((f = fopen("DAUSACH.bin","rb") )== NULL){
-//       printf("Error! opening file");
-//       exit(1);
-//   }
-//   
-//   	while(fread(&ds, sizeof(mt), 1, f)) {
-//   		
-//	}
-// 
-//	while(fread(&mt, sizeof(mt), 1, f)) {
-//		themCuoi(ls, mt);	
-//	}
-//	fclose(f);
-//	return; 
-//}
-
 int Delete_DauSach(LISTDS &l, int i)
 {
+	if (i == l.soluong) {
+
+		l.soluong--;
+		return 1;
+	}	
+	
 	int j;
+	
 	if(i < 0 || i >= l.soluong) return 0;
 	for(j = i+1;  j <= l.soluong ; j++)
 		l.nodeDS[j-1] = l.nodeDS[j];
@@ -707,11 +820,14 @@ void HienThiMenuDauSach(LISTDS &ls) {
 	char *tenSachCanTim;
 	int _theloai;
 	char *_isbn;
+	char *confirm;
 	LISTDS lsTL;
 	pDAUSACH sachTimDuoc;
+	
 
 	do {
 		for (int i = 0; i < 7; i++) {
+			printf("\n");
 			printf(MENU_DAUSACH[i]);
 		}
 		printf("\nNhap chuc nang:");
@@ -723,10 +839,17 @@ void HienThiMenuDauSach(LISTDS &ls) {
 	    		NhapThemDauSach(ls);
 
 				break;
-	    case 2:	
-	    	//docFileDAUSACH(ls);
-	    	DocDauSach(ls,"rb","dausach2.bin");
-	          break;
+	    case 2:	{
+			printf("\nNhap ma ISBN ban muon sua:");
+	 		_isbn = InputType(6,endchar,1);
+	 		uppercaseChar(_isbn);
+	 		int pos = KiemTraISBNTraVeViTri(ls,_isbn);
+	 		if (pos != -1) {
+	 			NhapSuaDauSach(ls,_isbn,pos);
+			 }
+			break;
+		}
+
 	    case 3:{
 	    	NHAPSACHDEXOA:
 	    	clrscr();
@@ -753,7 +876,10 @@ void HienThiMenuDauSach(LISTDS &ls) {
 			 		uppercaseChar(_isbn);
 			 		int pos = KiemTraISBNTraVeViTri(ls,_isbn);
 			 		if (pos != -1)
-			 			if (Delete_DauSach(ls,pos) == 1) {
+			 			if (demsoDMSdangduocmuon(ls.nodeDS[pos]->dms) > 0){
+			 				printf("\n ===> Sach nay dang co doc gia muon, khong duoc xoa!<==");
+			 				printf("\n                   ===> Xoa that bai <==");
+						 }else if (Delete_DauSach(ls,pos) == 1) {
 			 				printf("\n ===> Xoa thanh cong <==");
 						 } else {
 			 				printf("\n ===> Xoa that bai <==");
@@ -763,7 +889,11 @@ void HienThiMenuDauSach(LISTDS &ls) {
 					gotoxy(30,newLSDS.soluong + 7);
 			 		uppercaseChar(newLSDS.nodeDS[0]->ISBN);
 			 		int pos = KiemTraISBNTraVeViTri(ls,newLSDS.nodeDS[0]->ISBN);
-			 			if (Delete_DauSach(ls,pos) == 1) {
+			 			if (demsoDMSdangduocmuon(ls.nodeDS[pos]->dms) > 0){
+			 				printf("\n ===> Sach nay dang co doc gia muon, khong duoc xoa!<==");
+			 				printf("\n                   ===> Xoa that bai <==");
+						}else if (Delete_DauSach(ls,pos) == 1) {
+			
 			 				printf("\n ===> Xoa thanh cong <==");
 						 } else {
 			 				printf("\n ===> Xoa that bai <==");
@@ -774,17 +904,28 @@ void HienThiMenuDauSach(LISTDS &ls) {
 			 		printf(" ===> Hien tai khong co sach %s trong danh muc <==",tenSachCanTim);
 				}
 				getch();
+				break;
 			}			
-	        break;
 	    case 4:
 	    	clrscr();
 	    	xuatTheLoai(0,0);
 	    	printf("Nhap the loai:");
 	    	_theloai = atoi(InputType(1,endchar,2));
 	    	printf("\n\n%s",stringtheloai(kieutheloai(_theloai)));
+	    	khoitaoDauSach(lsTL);
 			lsTL = taoDStheoTL(ls,_theloai);
-			quickSortDAUSACH(lsTL,0,lsTL.soluong);
-	    	XuatDauSachTheoTheLoai(lsTL,stringtheloai(kieutheloai(_theloai)));
+			if (lsTL.soluong == -1) {
+				clrscr();
+				gotoxy(40,4);
+	    		printf("%s",stringtheloai(kieutheloai(_theloai)));
+				gotoxy(30,5);
+				printf("====> Hien tai the loai nay trong! <====");
+			} else {
+				quickSortDAUSACH(lsTL,0,lsTL.soluong);
+				printf("%d%s",_theloai,stringtheloai(kieutheloai(_theloai)));
+	    		XuatDauSachTheoTheLoai(lsTL,stringtheloai(kieutheloai(_theloai)));
+			}
+			
 	    	getch();
 	    	break;
 	    case 5:
@@ -800,21 +941,50 @@ void HienThiMenuDauSach(LISTDS &ls) {
 	   		printf("Da luu");
 	   		getch();
 	         break;
-		case 6:
+		case 6:{
+			clrscr();
 			printf("Nhap ten sach:");
 			tenSachCanTim = InputType(200,endchar,1);
 			uppercaseChar(tenSachCanTim);
-			sachTimDuoc = timkiemDauSachTheoTen(ls,tenSachCanTim);
+	 		LISTDS newLSDS;
+			soSachTrungTen(ls,tenSachCanTim,newLSDS);
+			if (newLSDS.soluong > 0) {
+				if (newLSDS.soluong == -1){
+					printf("\nSach %s ban muon xoa khong ton tai!",tenSachCanTim);
+				
+				} else {
+					XuatDauSachTheoTheLoai(newLSDS,"");
+					gotoxy(30,newLSDS.soluong + 7);
+					printf("\nNhap ma ISBN ban muon xem thong tin:");
+			 		_isbn = InputType(6,endchar,1);
+			 		uppercaseChar(_isbn);
+			 		int pos = KiemTraISBNTraVeViTri(ls,_isbn);
+			 		if (pos != -1)
+						XuatThongTinDauSach(ls.nodeDS[pos]);
 
-		//	sachTimDuoc = timkiemDauSachTuanTuTheoTen(ls,tenSachCanTim);
-			if (sachTimDuoc != NULL) {
-				XuatThongTinDauSach(sachTimDuoc);
+					}
+				} else if (newLSDS.soluong == 0) {
+					gotoxy(30,newLSDS.soluong + 7);
+			 		uppercaseChar(newLSDS.nodeDS[0]->ISBN);
+			 		int pos = KiemTraISBNTraVeViTri(ls,newLSDS.nodeDS[0]->ISBN);
+					XuatThongTinDauSach(newLSDS.nodeDS[0]);
 
-			}else {
-				printf("Khong co sach: %s",tenSachCanTim);
-			}
+				} else {
+					clrscr();
+					gotoxy(30,4);
+			 		printf(" ===> Hien tai khong co sach %s trong danh muc <==",tenSachCanTim);
+				}
+			
+//			sachTimDuoc = timkiemDauSachTheoTen(ls,tenSachCanTim);
+//			if (sachTimDuoc != NULL) {
+//				XuatThongTinDauSach(sachTimDuoc);
+//
+//			}else {
+//				printf("Khong co sach: %s ban muon tim!",tenSachCanTim);
+//			}
 			getch();
 			break;
+		}
 		case 7:
 			printf("Dang sap xep....");
 			Sleep(500);

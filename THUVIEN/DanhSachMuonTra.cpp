@@ -1,6 +1,6 @@
 #include "DauSach.cpp"
 
-char MENU_DOCGIA[7][30] 		= {"1.Quan ly sach    ","2.Nhap Sach     ","3. Sua         ","4.Xem thong tin sach     ","5.Quan Ly Doc Gia     ","6.Luu Thong Tin Vao File     ", "7.Quan Ly Muon Tra      " };
+char MENU_DOCGIA[5][30] 		= {"1.Quan ly sach    ","2.Quan Ly Doc Gia     ", "3.Quan Ly Muon Tra      ","4.Luu Thong Tin Vao File     ", "ESC: Thoat" };
 
 enum TrangThaiMT {
 	DANGMUON = 0,
@@ -67,7 +67,7 @@ int TraSach_DSMT(LISTMT &ls, LISTDS &LISTDauSach, char *masach, int trangthai){
 	int vitriSach = KiemTraMaSachTraVeViTri(LISTDauSach,masach);
 	
 	for(NodeMT_PTR p = ls.mtFirst; p != NULL; p = p->mtRight) {
-		if (strcmp(p->DSMT.MaSach, masach) == 0) {
+		if (strcmp(p->DSMT.MaSach, masach) == 0 && p->DSMT.trangthaiMT == 0) {
 			p->DSMT.trangthaiMT = trangthai;
 			p->DSMT.NgayTra = ntHT;
 			if (vitriSach > -1) {
@@ -274,34 +274,59 @@ void NhapMTvoiMaSach(LISTMT &ls, LISTDS &listDS) {
 			break;
 		}
 		
-	NHAPTENSACH:
-			printf("\nNhap ten sach: ");
-			tenSachCanTim = InputType(200,endchar,1);
-			uppercaseChar(tenSachCanTim);
-			maSachHopLe = MaSachDuocPhepMuon(listDS,tenSachCanTim);
-			if (endchar == ESC) {
-				break;	
-			}
-			if (strcmp(tenSachCanTim,"0") == 0) {
-				break;
-			}
-			
-			if (strlen(maSachHopLe) == 0) {
-				printf("\nKhong co sach: %s",tenSachCanTim);
-				goto NHAPTENSACH;
-			}
-					
-			if (ls.mtFirst == NULL) {
-				khoiTaoDSMUONTRA(ls);
-	
-			}
+//	NHAPTENSACH:
+//			printf("\nNhap ten sach: ");
+//			tenSachCanTim = InputType(200,endchar,1);
+//			uppercaseChar(tenSachCanTim);
+//			maSachHopLe = MaSachDuocPhepMuon(listDS,tenSachCanTim);
+//			if (endchar == ESC) {
+//				break;	
+//			}
+//			if (strcmp(tenSachCanTim,"0") == 0) {
+//				break;
+//			}
+//			
+//			if (strlen(maSachHopLe) == 0) {
+//				printf("\nKhong co sach: %s",tenSachCanTim);
+//				goto NHAPTENSACH;
+//			}
+
+//		Khoi tao danh sach muon tra neu doc gia chua muon bat ki cuon sach nao		
+		if (ls.mtFirst == NULL) {
+			khoiTaoDSMUONTRA(ls);
+
+		}
 			
 	
 	NHAPMA:
+		printf("\nNhap ma sach: ");
+		maSachHopLe = InputType(20, endchar,1);
 		uppercaseChar(maSachHopLe);
-		strcpy(item.MaSach,maSachHopLe);
-		printf("\nMa sach: %s",item.MaSach);
+		if(endchar == ESC){
+			break;
+		}
+		if (strlen(maSachHopLe) == 0) {
+			goto NHAPMA;
+			
+		}
 		vitriDMSTrongDS = KiemTraMaSachTraVeViTri(listDS, maSachHopLe);
+		if (vitriDMSTrongDS == -1) {
+			printf("\nMa sach '%s' khong ton tai trong DMS!",maSachHopLe);
+			goto NHAPMA;
+		}
+		
+		if (checkTrangThaiDMS(listDS.nodeDS[vitriDMSTrongDS]->dms,maSachHopLe) == 0){
+			strcpy(item.MaSach,maSachHopLe);
+		} else if (checkTrangThaiDMS(listDS.nodeDS[vitriDMSTrongDS]->dms,maSachHopLe) == 1){
+			printf("\nMa sach '%s' da co nguoi muon!",maSachHopLe);
+			goto NHAPMA;
+		} else if (checkTrangThaiDMS(listDS.nodeDS[vitriDMSTrongDS]->dms,maSachHopLe) == 2){
+			printf("\nMa sach '%s' da duoc thanh ly!",maSachHopLe);
+			goto NHAPMA;
+		} else {
+			printf("\nMa sach '%s' khong ton tai trong DMS!",maSachHopLe);
+			goto NHAPMA;
+			}
 
 	NHAPNGAYMUON:
 		LayNgayGioHT(ngaymuon);
@@ -311,10 +336,23 @@ void NhapMTvoiMaSach(LISTMT &ls, LISTDS &listDS) {
 	NHAPNGAYTRA:
 		printf("\nNhap ngay tra (dd/MM/yyyy):");
 		int check1 = NhapNgayThang(ngaytra,wherex(),wherey());
-		if (SoSanhNgay(ngaymuon, ngaytra) < 0) {
+
+		if (check1 == 2){
+			printf("\nNgay tra khong hop le! Vui long nhap lai!");
+			goto NHAPNGAYTRA;
+		}
+//		if (SoSanhNgay(ngaymuon, ngaytra) == 0) {
+//			printf("\nNgay tra khong hop le! Vui long nhap lai!");
+//			goto NHAPNGAYTRA;
+//
+//		}
+		if (SoSanhNgay(ngaymuon, ngaytra) > 7) {
+			printf("\nNgay tra khong duoc qua 7 ngay!");
 			goto NHAPNGAYTRA;
 
 		}
+		
+
 		item.NgayTra = ngaytra;
 		
 	NHAPTT:
@@ -430,7 +468,7 @@ void XuatCacSachDGMuon(LISTMT mt, LISTDS ds, int _y){
 	for(NodeMT_PTR p = mt.mtFirst; p != NULL; p = p->mtRight) {
 		vitriSach = KiemTraMaSachTraVeViTri(ds,p->DSMT.MaSach);
 		if (p->DSMT.trangthaiMT == 0 && vitriSach != -1 && strcmp(ds.nodeDS[vitriSach]->ISBN,ISBN) != 0){
-			ISBN = ds.nodeDS[vitriSach]->ISBN;
+				ISBN = ds.nodeDS[vitriSach]->ISBN;
 				gotoxy(10,y);
 					printf("%s",ds.nodeDS[vitriSach]->ISBN);
 				gotoxy(20,y);
@@ -444,6 +482,7 @@ void XuatCacSachDGMuon(LISTMT mt, LISTDS ds, int _y){
 				gotoxy(100,y);
 					printf("%d",ds.nodeDS[vitriSach]->NamXuatBan);
 		}
+		y+=1;
 	}
 }
 

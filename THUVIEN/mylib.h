@@ -429,11 +429,11 @@ int NhapNgayThang(NGAY_THANG &nt, int x, int y)
 //						cout << "                                                  ";
 
 						// kiem tra truong hop dac biet
-						if (KhoangCachNgay(temp) < 0)
+						if (KhoangCachNgay(temp) <= 0)
 						{
 						//	printf("khoang cach: %d", KhoangCachNgay(temp));
 						//	xuatNgayThang(temp,x+50,y+1);
- 
+							nt = temp;
 							return 1;
 						}
 						else
@@ -442,7 +442,6 @@ int NhapNgayThang(NGAY_THANG &nt, int x, int y)
 //							printf("dung");
 //							printf("khoang cach: %d", KhoangCachNgay(temp));
 //							xuatNgayThang(temp,x+50,y+1);
-							nt = temp;
 							return 2;
 						}		
 					}
